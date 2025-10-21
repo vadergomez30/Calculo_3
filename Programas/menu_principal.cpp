@@ -45,7 +45,8 @@ int main(){
             cout<<"Selecciona el metodo a utilizar: "<<endl;
             cout<<"1. Metodo de Gauss"<<endl;
             cout<<"2. Metodo de Gauss-Jordan"<<endl;
-            cout<<"Seleccione una opcion (1-2): ";
+            cout<<"3. Metodo de la Inversa"<<endl;
+            cout<<"Seleccione una opcion (1-3): ";
             cin>>opc3;
             switch(opc3){
                 case 1:
@@ -53,6 +54,9 @@ int main(){
                     break;
                 case 2:
                     GaussJordan();
+                    break;
+                case 3:
+                    Inversa();
                     break;
                 default:
                     cout<<"Opcion no valida"<<endl;
