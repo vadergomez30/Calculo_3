@@ -1,0 +1,3 @@
+#Se van a elimiar los siguintes archivos
+*.exe
+!menu.exe #El menu siempre se subira
