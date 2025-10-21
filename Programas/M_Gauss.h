@@ -154,3 +154,86 @@ void Gauss() {
 
 
 }
+void recursiva(vector<vector<double>>& mat, vector<double>&ind,int k, int n){
+    if(k==n){
+        cout<<"\nLos valores para x son: ";
+        for(int i=0; i<n; i++){
+            cout<<"\nx"<<i+1<<" = "<<ind[i]<<" ";
+        }
+        return;
+    }
+    cout<<"\niteracion: "<<k+1<<'\n';
+    double factor;
+    factor = mat[k][k];
+    for(int i=k; i<n; i++){
+        mat[k][i]/=factor;
+    }
+    ind[k]/=factor;
+    for (int i = k + 1; i < n; ++i) {
+        factor = mat[i][k];
+        for (int j = k; j < n; ++j) {
+            mat[i][j] -= factor * mat[k][j];
+        }
+        ind[i] -= factor * ind[k];
+    }
+     for (int p = k ; p >= 0; p--) { 
+        for (int i = p - 1; i >= 0; i--) {
+            factor = mat[i][p];
+            for (int j = 0; j < n; j++) {
+                mat[i][j] -= factor * mat[p][j];
+            }
+            ind[i] -= factor * ind[p];
+        }
+    }
+
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+            cout<<mat[i][j]<<" ";
+        }
+        cout<<'\n';
+    }
+    cout<<'\n';
+    for(int i=0; i<n; i++){
+        cout<<ind[i]<<" ";
+    }
+    cout<<'\n';
+    recursiva(mat,ind,k+1, n);
+}
+
+
+void GaussJordan() {
+    cout<<"Metodo de Gauss-Jordan\n";
+cout<<"\nIngresa el tamaño de tu matriz: \n";
+    int n; cin>>n;
+    vector<vector<double>> mat(n, vector<double>(n));
+    vector<double>ind(n);
+    cout<<"\nIngrese los elementos de su matriz de coeficientes: \n";
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+            cin>>mat[i][j];
+        }
+    }   
+    
+    if(determinant(mat) == 0){
+        cout<<"La matriz no tiene solucion unica\n";
+        return ;
+    }
+
+    cout<<"\nIngrese los elementos de su vector de terminos independientes: \n";
+    for(int i=0; i<n; i++){
+        cin>>ind[i];
+    }
+
+    for(int i=0; i<n; i++){
+        if(mat[i][i] == 0.0){
+            cout<<"La matriz contiene un 0 en la diagonal\n";
+            return ;
+        }
+    }
+    int k=0;
+    recursiva(mat,ind,k, n);
+    cout<<'\n';
+
+
+    return ;
+}

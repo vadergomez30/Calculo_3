@@ -52,7 +52,7 @@ int main(){
                     Gauss();
                     break;
                 case 2:
-                    cout<<"En proceso de desarrollo"<<endl;
+                    GaussJordan();
                     break;
                 default:
                     cout<<"Opcion no valida"<<endl;
