@@ -44,30 +44,27 @@ vector<vector<double>> identidad(int n) {
     return pos;
 }
 
-vector<vector<double>> inversa(vector<vector<double>>& mat, vector<vector<double>>& iden, int k, int n){//mat matriz original, k fila actual siempre inicia en 0, n tamano matriz
-    if(k >= n){
-        return iden;
-    }
+vector<vector<double>> inversa(vector<vector<double>>& mat, vector<vector<double>>& iden, int k, int n) {
+    if (k >= n) return iden;
     double factor = mat[k][k];
-
-    for(int j = 0; j < n; j++) {
+    for (int j = 0; j < n; j++) {
         mat[k][j] /= factor;
         iden[k][j] /= factor;
     }
 
-    for(int i = 0; i < n; i++) {
-        if(i == k) continue;
+    for (int i = 0; i < n; i++) {
+        if (i == k) continue;
         factor = mat[i][k];
-        for(int j = 0; j < n; j++) {
+        for (int j = 0; j < n; j++) {
             mat[i][j] -= factor * mat[k][j];
             iden[i][j] -= factor * iden[k][j];
         }
     }
 
-    inversa(mat, iden, k+1, n);
+    return inversa(mat, iden, k + 1, n);
 }
 
-vector<vector<double>> mMUlt(vector<vector<double>>& A, vector<vector<double>>& B){
+vector<vector<double>> mMUlt(const vector<vector<double>>& A, const vector<vector<double>>& B){
     int n=A.size();
     int m=B[0].size();
     vector<vector<double>> C(n,vector<double>(m,0));
