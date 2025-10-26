@@ -28,7 +28,7 @@ vector<vector<double>> getE(vector<vector<double>> mat,int P,vector<vector<doubl
     }
     return mMUlt(A22inv,A21);
 }
-vector<vector<double>> getC(vector<vector<double>>&mat,vector<vector<double>> D,int P, int n){
+vector<vector<double>> getC(vector<vector<double>>&mat,vector<vector<double>> D,int P){
     vector<vector<double>>A21(3,vector<double>(P));
     for(int i=0; i<3; i++){
         for(int j=0; j<P; j++){
@@ -52,20 +52,13 @@ vector<vector<double>> getC(vector<vector<double>>&mat,vector<vector<double>> D,
     }
     return C;
 }
-vector<vector<double>> getF(vector<vector<double>> mat,vector<vector<double>> D,vector<vector<double>> C,vector<vector<double>> E, int &P){
+vector<vector<double>> getF(vector<vector<double>> mat,vector<vector<double>> D,vector<vector<double>> C,vector<vector<double>> E,vector<vector<double>>A22inv ,int &P){
     vector<vector<double>>idenC=identidad(P);
-    vector<vector<double>>idenA22=identidad(3);
     vector<vector<double>>ECinv=mMUlt(E,inversa(C,idenC,0,C.size()));
     vector<vector<double>>ECinvD=mMUlt(ECinv,D);
-    
-    vector<vector<double>>A22(3,vector<double>(3));
-    for(int i=0; i<3; i++){
-        for(int j=0; j<3; j++){
-            A22[i][j]=mat[i+P][j+P];
-        }
-    }
-    vector<vector<double>>A22inv= inversa(A22,idenA22,0,3);
-    vector<vector<double>> F(3, vector<double>(3, 0.0));
+
+    vector<vector<double>>F(3,(vector<double>(3)));
+
     for (int i = 0; i < 3; ++i) {
         for (int j = 0; j < 3; ++j) {
             F[i][j] = A22inv[i][j] + ECinvD[i][j];
@@ -124,8 +117,8 @@ int main() {
 
     vector<vector<double>>D= getD(mat,P,A22inv);
     vector<vector<double>>E= getE(mat,P,A22inv);
-    vector<vector<double>>C= getC(mat,D,P,n);
-    vector<vector<double>>F= getF(mat,D,C,E,P);
+    vector<vector<double>>C= getC(mat,D,P);
+    vector<vector<double>>F= getF(mat,D,C,E,A22inv,P);
     
     for(int i = 0; i < F.size(); i++) {
         for(int j = 0; j < F[0].size(); j++) {
