@@ -67,6 +67,46 @@ vector<vector<double>> getF(vector<vector<double>> mat,vector<vector<double>> D,
     return F;
 
 }
+void resultado(vector<vector<double>>D,vector<vector<double>>E,vector<vector<double>>C,vector<vector<double>>F,int n, int P){
+    vector<vector<double>>idenC=identidad(P);
+    vector<vector<double>>Cinv=inversa(C,idenC,0,C.size());
+    vector<vector<double>>CinvD=mMUlt(Cinv,D);
+    vector<vector<double>>ECinv=mMUlt(E,Cinv);
+
+    vector<vector<double>>res(n,vector<double>(n));
+    for(int i=0; i<P;i++){
+        for (int j=0; j<P; j++){
+            res[i][j]=Cinv[i][j];
+        }
+    }
+    for(int i=0; i<P;i++){
+        for (int j=0; j<3; j++){
+            res[i][j+P]=CinvD[i][j]*-1;
+        }
+    }
+    for(int i=0; i<3;i++){
+        for (int j=0; j<P; j++){
+            res[i+P][j]=ECinv[i][j]*-1;
+        }
+    }
+    for(int i=0; i<3;i++){
+        for (int j=0; j<3; j++){
+            res[i+P][j+P]=F[i][j];
+        }
+    }
+    cout<<"\nMatriz inversa\n";
+    for(int i = 0; i < n; i++) {
+        for(int j = 0; j < n; j++) {
+            if (abs(res[i][j]) < 1e-10){  // Si es muy cercano a 0
+                cout << 0 << "\t";
+            }else{
+                cout << res[i][j] << " ";
+            }
+        }
+        cout << '\n';
+    }
+}
+
 
 int main() {
     cout << "Metodo de Particionado de Matrices\n";
@@ -119,12 +159,6 @@ int main() {
     vector<vector<double>>E= getE(mat,P,A22inv);
     vector<vector<double>>C= getC(mat,D,P);
     vector<vector<double>>F= getF(mat,D,C,E,A22inv,P);
-    
-    for(int i = 0; i < F.size(); i++) {
-        for(int j = 0; j < F[0].size(); j++) {
-            cout << F[i][j] << " ";
-        }
-        cout<<'\n';
-    }
+    resultado(D,E,C,F,n,P);
     
 }
