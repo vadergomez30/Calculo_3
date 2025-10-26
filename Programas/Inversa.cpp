@@ -1,6 +1,6 @@
 #include <bits/stdc++.h>
 using namespace std;
-#include "M_Gauss.h"
+#include "Ope_Matrices.h"
 vector<vector<double>> identidad(int n) {
     vector<vector<double>>pos(n,vector<double>(n));
     for(int i=0; i<n; i++){
@@ -65,38 +65,6 @@ void recursiva2(vector<vector<double>>& mat, vector<vector<double>>& iden, int k
 
     recursiva2(mat, iden, k+1, ind, n);
 }
-
-/*vector<vector<double>> getSubmatrix(const vector<vector<double>>& mat, int row, int col) {
-    int n = mat.size();
-    vector<vector<double>> submat(n - 1, vector<double>(n - 1));
-    int subi = 0;
-    for (int i = 0; i < n; i++) {
-        if (i == row) continue;
-        int subj = 0;
-        for (int j = 0; j < n; j++) {
-            if (j == col) continue;
-            submat[subi][subj] = mat[i][j];
-            subj++;
-        }
-        subi++;
-    }
-    return submat;
-}
-*/
-/*double determinant(const vector<vector<double>>& mat) {
-    int n = mat.size();
-    
-    if (n == 1) return mat[0][0];
-    if (n == 2) return mat[0][0]*mat[1][1] - mat[0][1]*mat[1][0]; // caso base 2x2
-
-    int det = 0;
-    for (int j = 0; j < n; j++) {
-        vector<vector<double>> submat = getSubmatrix(mat, 0, j);
-        det += ( (j % 2 == 0 ? 1 : -1) * mat[0][j] * determinant(submat) );
-    }
-    return det;
-}
- */   
 
 void Inversa() {
     cout<<"Metodo de Inversion de Matrices\n";

@@ -1,40 +1,8 @@
 #include <iostream>
 #include <vector>
+#include "Ope_Matrices.h"
 
 using namespace std;
-
-// FunciÃ³n para obtener la submatriz eliminando fila `row` y columna `col`
-vector<vector<double>> getSubmatrix(const vector<vector<double>>& mat, int row, int col) {
-    int n = mat.size();
-    vector<vector<double>> submat(n - 1, vector<double>(n - 1));
-    int subi = 0;
-    for (int i = 0; i < n; i++) {
-        if (i == row) continue;
-        int subj = 0;
-        for (int j = 0; j < n; j++) {
-            if (j == col) continue;
-            submat[subi][subj] = mat[i][j];
-            subj++;
-        }
-        subi++;
-    }
-    return submat;
-}
-
-// FunciÃ³n recursiva para calcular el determinante
-double determinant(const vector<vector<double>>& mat) {
-    int n = mat.size();
-    
-    if (n == 1) return mat[0][0];
-    if (n == 2) return mat[0][0]*mat[1][1] - mat[0][1]*mat[1][0]; // caso base 2x2
-
-    double det = 0;
-    for (int j = 0; j < n; j++) {
-        vector<vector<double>> submat = getSubmatrix(mat, 0, j);
-        det += ( (j % 2 == 0 ? 1 : -1) * mat[0][j] * determinant(submat) );
-    }
-    return det;
-}
 
 void Gauss() {
     int n,i,j,k;
@@ -154,7 +122,7 @@ void Gauss() {
 
 
 }
-void recursiva(vector<vector<double>>& mat, vector<double>&ind,int k, int n){
+void recursiva(vector<vector<double>>& mat, vector<double>&ind,int k, int n){ //Crea la matriz identidad mediante gauss-jordan
     if(k==n){
         cout<<"\nLos valores para x son: ";
         for(int i=0; i<n; i++){
@@ -176,7 +144,7 @@ void recursiva(vector<vector<double>>& mat, vector<double>&ind,int k, int n){
         }
         ind[i] -= factor * ind[k];
     }
-     for (int p = k ; p >= 0; p--) { 
+    for (int p = k ; p >= 0; p--) { 
         for (int i = p - 1; i >= 0; i--) {
             factor = mat[i][p];
             for (int j = 0; j < n; j++) {
@@ -203,7 +171,7 @@ void recursiva(vector<vector<double>>& mat, vector<double>&ind,int k, int n){
 
 void GaussJordan() {
     cout<<"Metodo de Gauss-Jordan\n";
-cout<<"\nIngresa el tamaño de tu matriz: \n";
+    cout<<"\nIngresa el tamaño de tu matriz: \n";
     int n; cin>>n;
     vector<vector<double>> mat(n, vector<double>(n));
     vector<double>ind(n);
