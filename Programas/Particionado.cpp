@@ -67,7 +67,7 @@ vector<vector<double>> getF(vector<vector<double>> mat,vector<vector<double>> D,
     return F;
 
 }
-void resultado(vector<vector<double>>D,vector<vector<double>>E,vector<vector<double>>C,vector<vector<double>>F,int n, int P){
+void resultado(vector<vector<double>>D,vector<vector<double>>E,vector<vector<double>>C,vector<vector<double>>F,vector<double>ind,int n, int P){
     vector<vector<double>>idenC=identidad(P);
     vector<vector<double>>Cinv=inversa(C,idenC,0,C.size());
     vector<vector<double>>CinvD=mMUlt(Cinv,D);
@@ -105,6 +105,18 @@ void resultado(vector<vector<double>>D,vector<vector<double>>E,vector<vector<dou
         }
         cout << '\n';
     }
+
+    vector<double> solucion(n,0);
+    for(int i=0; i<n; i++){
+        for(int j=0; j<n; j++){
+            solucion[i]+=ind[j]*res[i][j];
+        }
+    }
+    cout<<"\nLa solucion del sistema de ecuaciones es: \n";
+    for(int i=0; i<n; i++){
+        cout<<"x"<<i+1<<" = "<<solucion[i]<<'\n';
+    }
+    cout<<'\n';
 }
 
 
@@ -159,6 +171,6 @@ int main() {
     vector<vector<double>>E= getE(mat,P,A22inv);
     vector<vector<double>>C= getC(mat,D,P);
     vector<vector<double>>F= getF(mat,D,C,E,A22inv,P);
-    resultado(D,E,C,F,n,P);
+    resultado(D,E,C,F,ind,n,P);
     
 }
