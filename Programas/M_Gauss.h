@@ -1,8 +1,36 @@
 #include <iostream>
 #include <vector>
-#include "Ope_Matrices.h"
-
 using namespace std;
+vector<vector<double>> getSubmatrix(const vector<vector<double>>& mat, int row, int col) {
+    int n = mat.size();
+    vector<vector<double>> submat(n - 1, vector<double>(n - 1));
+    int subi = 0;
+    for (int i = 0; i < n; i++) {
+        if (i == row) continue;
+        int subj = 0;
+        for (int j = 0; j < n; j++) {
+            if (j == col) continue;
+            submat[subi][subj] = mat[i][j];
+            subj++;
+        }
+        subi++;
+    }
+    return submat;
+}
+
+double determinant(const vector<vector<double>>& mat) {
+    int n = mat.size();
+    
+    if (n == 1) return mat[0][0];
+    if (n == 2) return mat[0][0]*mat[1][1] - mat[0][1]*mat[1][0]; // caso base 2x2
+
+    double det = 0;
+    for (int j = 0; j < n; j++) {
+        vector<vector<double>> submat = getSubmatrix(mat, 0, j);
+        det += ( (j % 2 == 0 ? 1 : -1) * mat[0][j] * determinant(submat) );
+    }
+    return det;
+}
 
 void Gauss() {
     int n,i,j,k;
@@ -207,7 +235,7 @@ void GaussJordan() {
 
     return ;
 }
-vector<vector<double>> identidad(int n) {
+vector<vector<double>> identidad2(int n) {
     vector<vector<double>>pos(n,vector<double>(n));
     for(int i=0; i<n; i++){
         for(int j=0; j<n; j++){
@@ -276,7 +304,7 @@ void Inversa() {
     cout<<"\nIngrese el tamano de la matriz: ";
     int n; cin>>n;
     vector<vector<double>> mat(n, vector<double>(n));
-    vector<vector<double>> iden = identidad(n);
+    vector<vector<double>> iden = identidad2(n);
     vector<double>ind(n);
     cout<<"\nIngrese los elementos de su matriz de coeficientes: \n";
     for(int i=0; i<n; i++){
