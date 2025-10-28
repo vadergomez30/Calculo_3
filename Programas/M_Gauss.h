@@ -70,6 +70,8 @@ void Gauss() {
     }
     */
 
+    //Hola 
+
 
     // --- EliminaciÃ³n Gaussiana ---
     for (k = 0; k < n - 1; k++) {
