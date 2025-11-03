@@ -1,15 +1,14 @@
 
 #include <bits/stdc++.h>
-using namespace std;
-#include "M_Gauss.h"   
+using namespace std; 
 using Mat = vector<vector<double>>;
 static const double EPS = 1e-12;
 
-Mat identidad(int n){
+/*Mat identidad2(int n){
     Mat I(n, vector<double>(n,0.0));
     for(int i=0;i<n;i++) I[i][i]=1.0;
     return I;
-}
+}*/
 void printVec(const vector<double>& v, const string& title){
     cout << "\n" << title << ":\n";
     cout.setf(std::ios::fixed); cout<<setprecision(8);
@@ -63,7 +62,7 @@ Mat resta(const Mat& A, const Mat& B){
 }
 Mat invGaussJordan(const Mat& A){
     int n=A.size();
-    Mat M=A, Inv=identidad(n);
+    Mat M=A, Inv=identidad2(n);
     for(int col=0; col<n; col++){
         int piv=col;
         double best=fabs(M[piv][col]);
@@ -121,27 +120,27 @@ void partirb(const vector<double>& b, int p, vector<double>& b1, vector<double>&
 // 3) (A22')^{-1}. b2'' = (A22')^{-1} b2'
 // 4) b1'' = b1' - A12' b2''
 // 5) x = [b1''; b2'']
-int main(){
+void GaussParticionado(){
     //ios::sync_with_stdio(false);
     //cin.tie(nullptr);
 
     int n;
     cout<<"Hola"<<endl;
     cout << "Ingrese n (n>=2): ";
-    if(!(cin>>n) || n<2){ cerr<<"n invalido.\n"; return 1; }
+    if(!(cin>>n) || n<2){ cerr<<"n invalido.\n"; return; }
 
     Mat A(n, vector<double>(n,0.0));
     cout << "Ingrese la matriz A ("<<n<<"x"<<n<<"), por filas:\n";
     for(int i=0;i<n;i++){
         for(int j=0;j<n;j++){
-            if(!(cin>>A[i][j])){ cerr<<"Entrada invalida.\n"; return 1; }
+            if(!(cin>>A[i][j])){ cerr<<"Entrada invalida.\n"; return; }
         }
     }
 
     vector<double> b(n,0.0);
     cout << "Ingrese el vector b ("<<n<<" valores):\n";
     for(int i=0;i<n;i++){
-        if(!(cin>>b[i])){ cerr<<"Entrada invalida.\n"; return 1; }
+        if(!(cin>>b[i])){ cerr<<"Entrada invalida.\n"; return; }
     }
 
     printMat(A, "Matriz A ingresada");
@@ -153,12 +152,12 @@ int main(){
     cout << "\nDeterminante de A: " << detA << "\n";
     if(fabs(detA)<EPS){
         cout << "El sistema no tiene solucion unica (det(A)=0). Fin.\n";
-        return 0;
+        return;
     }
 
     int p;
     cout << "\nIngrese la particion p (tamano de A11, 1.."<<(n-1)<<"): ";
-    if(!(cin>>p) || p<=0 || p>=n){ cerr<<"Particion p invalida.\n"; return 1; }
+    if(!(cin>>p) || p<=0 || p>=n){ cerr<<"Particion p invalida.\n"; return; }
 
     // Partir A y b
     Mat A11,A12,A21,A22;
@@ -227,8 +226,8 @@ int main(){
     catch(const exception& e){
         cerr << "\nError: " << e.what() << "\n";
         cerr << "Revisa tu particion p (A11 debe ser invertible) o el condicionamiento numerico.\n";
-        return 1;
+        return;
     }
 
-    return 0;
+    return;
 }

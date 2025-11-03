@@ -3,6 +3,7 @@
 #include <cmath>
 #include "M_Gauss.h"
 #include "Particionado.h"
+#include "GaussP.h"
 using namespace std;
 int main(){
     int opc;
@@ -48,6 +49,8 @@ int main(){
             cout<<"2. Metodo de Gauss-Jordan"<<endl;
             cout<<"3. Metodo de la Inversa"<<endl;
             cout<<"4. Inversa particionado"<<endl;
+            cout<<"5. Gauss Particionado"<<endl;
+            
             cout<<"Seleccione una opcion (1-3): ";
             cin>>opc3;
             switch(opc3){
@@ -62,6 +65,9 @@ int main(){
                     break;
                 case 4:
                     Particionado();
+                    break;
+                case 5:
+                    GaussParticionado();
                     break;
                 default:
                     cout<<"Opcion no valida"<<endl;
