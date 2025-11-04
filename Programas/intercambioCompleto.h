@@ -4,7 +4,6 @@
 #include <cmath>
 #include <string>
 #include <algorithm>
-
 using std::cin;
 using std::cout;
 using std::endl;
@@ -15,7 +14,7 @@ using std::vector;
 
 using Mat = vector<vector<double>>;
 
-static const double EPS = 1e-12;
+static const double EPS1 = 1e-12;
 
 // ---------- Utilidades de impresión ----------
 void printTable(const Mat& A,
@@ -110,7 +109,7 @@ SolveResult metodoIntercambio(Mat A, const vector<double>& b_in)
                 }
 
         double alk = A[l][k];
-        if (std::fabs(alk) < EPS)
+        if (std::fabs(alk) < EPS1)
             return {false, {}, {}, "Pivote casi cero: matriz singular o mal condicionada."};
 
         cout << "\nIteracion " << it
@@ -157,28 +156,28 @@ SolveResult metodoIntercambio(Mat A, const vector<double>& b_in)
 }
 
 // ---------- Programa principal ----------
-int main(){
-    std::ios::sync_with_stdio(false);
+void Intercambio(){
+    //std::ios::sync_with_stdio(false);
     
 
     int n;
     cout << "Ingrese n (tamano de A): ";
     if(!(cin >> n) || n <= 0){
         cout << "n invalido.\n";
-        return 0;
+        return ;
     }
 
     Mat A(n, vector<double>(n, 0.0));
     vector<double> b(n, 0.0);
 
-    cout << "Capture A (" << n << "x" << n << ") por filas:\n";
+    cout << "Ingresa la matriz A (" << n << "x" << n << ") por filas:\n";
     for(int i=0;i<n;++i){
         for(int j=0;j<n;++j){
             cout << "A["<<i+1<<","<<j+1<<"] = ";
             cin >> A[i][j];
         }
     }
-    cout << "Capture b (" << n << " componentes):\n";
+    cout << "Ingresa el vector b (" << n << " componentes):\n";
     for(int i=0;i<n;++i){
         cout << "b["<<i+1<<"] = ";
         cin >> b[i];
@@ -187,7 +186,7 @@ int main(){
     auto res = metodoIntercambio(A, b);
     if(!res.ok){
         cout << "\nError: " << res.msg << "\n";
-        return 0;
+        return;
     }
 
     // Mostrar A^{-1} reacomodada y solucion
@@ -207,7 +206,7 @@ int main(){
         cout << "x" << (i+1) << " = " << y << "\n";
     }
     cout << endl;
-    return 0;
+    return;
 
     cin.tie(nullptr);
 }

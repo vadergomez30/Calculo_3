@@ -1,9 +1,9 @@
+#include <bits/stdc++.h>
 #include "sistemalineales_primerosmetodos.h"
-#include <iostream>
-#include <cmath>
 #include "M_Gauss.h"
 #include "Particionado.h"
 #include "GaussP.h"
+#include "intercambioCompleto.h"
 using namespace std;
 int main(){
     int opc;
@@ -50,8 +50,8 @@ int main(){
             cout<<"3. Metodo de la Inversa"<<endl;
             cout<<"4. Inversa particionado"<<endl;
             cout<<"5. Gauss Particionado"<<endl;
-            
-            cout<<"Seleccione una opcion (1-3): ";
+            cout<<"6. Intercambio"<<endl;
+            cout<<"Seleccione una opcion (1-6): ";
             cin>>opc3;
             switch(opc3){
                 case 1:
@@ -68,6 +68,9 @@ int main(){
                     break;
                 case 5:
                     GaussParticionado();
+                    break;
+                case 6:
+                    Intercambio();
                     break;
                 default:
                     cout<<"Opcion no valida"<<endl;
