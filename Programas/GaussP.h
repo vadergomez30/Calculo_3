@@ -1,14 +1,8 @@
-
 #include <bits/stdc++.h>
 using namespace std; 
 using Mat = vector<vector<double>>;
 static const double EPS = 1e-12;
 
-/*Mat identidad2(int n){
-    Mat I(n, vector<double>(n,0.0));
-    for(int i=0;i<n;i++) I[i][i]=1.0;
-    return I;
-}*/
 void printVec(const vector<double>& v, const string& title){
     cout << "\n" << title << ":\n";
     cout.setf(std::ios::fixed); cout<<setprecision(8);
