@@ -5,6 +5,7 @@
 #include "GaussP.h"
 #include "intercambioCompleto.h"
 #include "Jacobi.h"
+#include "Gauss-Seidel.h"
 using namespace std;
 int main(){
     int opc;
@@ -44,7 +45,7 @@ int main(){
             break;
         }
         case 2: {
-            int opc3;
+            int opc2;
             cout<<"Has seleccionado la opcion 2"<<endl;
             cout<<"Selecciona el metodo a utilizar: "<<endl;
             cout<<"1. Metodo de Gauss"<<endl;
@@ -54,8 +55,8 @@ int main(){
             cout<<"5. Gauss Particionado"<<endl;
             cout<<"6. Intercambio"<<endl;
             cout<<"Seleccione una opcion (1-6): ";
-            cin>>opc3;
-            switch(opc3){
+            cin>>opc2;
+            switch(opc2){
                 case 1:
                     Gauss();
                     break;
@@ -80,14 +81,19 @@ int main(){
             break;
         }
         case 3:
+            int opc2;
             cout<<"Has seleccionado la opcion 3"<<endl;
             cout<<"Selecciona el metodo a utilizar: "<<endl;
             cout<<"1. Metodo de Jacobi"<<endl;
-            cout<<"Seleccione una opcion (1): ";
-            cin>>opc;
-            switch(opc){
+            cout<<"2. Metodo de Gauss-Seidel"<<endl;
+            cout<<"Seleccione una opcion (1-2): ";
+            cin>>opc2;
+            switch(opc2){
                 case 1:
                     Jacobi();
+                    break;
+                case 2:
+                    GaussSeidel();
                     break;
                 default:
                     cout<<"Opcion no valida"<<endl;
