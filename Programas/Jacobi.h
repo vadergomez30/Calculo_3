@@ -1,8 +1,6 @@
 #include <bits/stdc++.h>
-#include "M_Gauss.h"
 using namespace std; 
 using Mat = vector<vector<double>>;
-static const double EPS = 1e-12;
 
 bool supuestos(const Mat& A){
     int n=A.size();
@@ -50,7 +48,7 @@ void iterativoJacobi(const Mat&A, const vector<double>&b, vector<double>&x_ant, 
     }
 }
 
-int main(){
+void Jacobi(){
     int n, count=0;
     double error;
     cout << "Ingrese el tamano n de la matriz (n x n): "<<endl;
@@ -71,7 +69,7 @@ int main(){
     }
     if(!supuestos(A)){
         cout<<"La matriz no cumple los supuestos necesarios (dominancia diagonal y no singularidad).\n";
-        return 0;
+        return;
     }
     vector<double> x_ant(n,0.0);
     vector<double> x_nue(n,0.0);

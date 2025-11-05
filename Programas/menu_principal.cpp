@@ -4,13 +4,15 @@
 #include "Particionado.h"
 #include "GaussP.h"
 #include "intercambioCompleto.h"
+#include "Jacobi.h"
 using namespace std;
 int main(){
     int opc;
     cout<<"Menu Principal\n";
     cout<<"1. Solucion numerica de ecuaciones de una sola variable"<<endl;
     cout<<"2.Soluciones de sistemas ecuaciones lineales"<<endl;
-    cout<<"Seleccione una opcion (1-2): ";
+    cout<<"3. Metodos iterativos para sistemas de ecuaciones lineales"<<endl;
+    cout<<"Seleccione una opcion (1-3): ";
     cin>>opc;
     switch(opc){
         case 1: {
@@ -77,6 +79,20 @@ int main(){
             }
             break;
         }
+        case 3:
+            cout<<"Has seleccionado la opcion 3"<<endl;
+            cout<<"Selecciona el metodo a utilizar: "<<endl;
+            cout<<"1. Metodo de Jacobi"<<endl;
+            cout<<"Seleccione una opcion (1): ";
+            cin>>opc;
+            switch(opc){
+                case 1:
+                    Jacobi();
+                    break;
+                default:
+                    cout<<"Opcion no valida"<<endl;
+            }
+            break;
         default:
             cout<<"Opcion no valida"<<endl;
     }
