@@ -1,5 +1,7 @@
 #include <iostream>
 #include <vector>
+#include <iomanip>
+#include <cmath>
 using namespace std;
 vector<vector<double>> identidad(int n) {
     vector<vector<double>>pos(n,vector<double>(n));
@@ -45,26 +47,20 @@ vector<vector<double>> mMUlt(const vector<vector<double>>& A, const vector<vecto
     return C;
 }
 
-
-
 vector<vector<double>> getD(vector<vector<double>> mat,int P,vector<vector<double>> A22inv){
-    vector<vector<double>>A12(P,vector<double>(3));
+    int k=mat.size()-P;
+    vector<vector<double>>A12(P,vector<double>(k));
     for(int i=0; i<P; i++){
-        for(int j=0; j<3; j++){
+        for(int j=0; j<k; j++){
             A12[i][j]=mat[i][j+P];
-        }
-    }
-    vector<vector<double>>A22(3,vector<double>(3));
-    for(int i=0; i<3; i++){
-        for(int j=0; j<3; j++){
-            A22[i][j]=mat[i+P][j+P];
         }
     }
     return mMUlt(A12, A22inv);
 }
 vector<vector<double>> getE(vector<vector<double>> mat,int P,vector<vector<double>> A22inv){
-    vector<vector<double>>A21(3,vector<double>(P));
-    for(int i=0; i<3; i++){
+    int k=mat.size()-P;
+    vector<vector<double>>A21(k,vector<double>(P));
+    for(int i=0; i<k; i++){
         for(int j=0; j<P; j++){
             A21[i][j]=mat[i+P][j];
         }
@@ -72,8 +68,9 @@ vector<vector<double>> getE(vector<vector<double>> mat,int P,vector<vector<doubl
     return mMUlt(A22inv,A21);
 }
 vector<vector<double>> getC(vector<vector<double>>&mat,vector<vector<double>> D,int P){
-    vector<vector<double>>A21(3,vector<double>(P));
-    for(int i=0; i<3; i++){
+    int k=mat.size()-P;
+    vector<vector<double>>A21(k,vector<double>(P));
+    for(int i=0; i<k; i++){
         for(int j=0; j<P; j++){
             A21[i][j]=mat[i+P][j];
         }
@@ -96,14 +93,15 @@ vector<vector<double>> getC(vector<vector<double>>&mat,vector<vector<double>> D,
     return C;
 }
 vector<vector<double>> getF(vector<vector<double>> mat,vector<vector<double>> D,vector<vector<double>> C,vector<vector<double>> E,vector<vector<double>>A22inv ,int &P){
+    int k=mat.size()-P;
     vector<vector<double>>idenC=identidad(P);
     vector<vector<double>>ECinv=mMUlt(E,inversa(C,idenC,0,C.size()));
     vector<vector<double>>ECinvD=mMUlt(ECinv,D);
 
-    vector<vector<double>>F(3,(vector<double>(3)));
+    vector<vector<double>>F(k,(vector<double>(k,0)));
 
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
+    for (int i = 0; i < k; ++i) {
+        for (int j = 0; j < k; ++j) {
             F[i][j] = A22inv[i][j] + ECinvD[i][j];
         }
     }
@@ -111,6 +109,7 @@ vector<vector<double>> getF(vector<vector<double>> mat,vector<vector<double>> D,
 
 }
 void resultado(vector<vector<double>>D,vector<vector<double>>E,vector<vector<double>>C,vector<vector<double>>F,vector<double>ind,int n, int P){
+    int k=n-P;
     vector<vector<double>>idenC=identidad(P);
     vector<vector<double>>Cinv=inversa(C,idenC,0,C.size());
     vector<vector<double>>CinvD=mMUlt(Cinv,D);
@@ -123,17 +122,17 @@ void resultado(vector<vector<double>>D,vector<vector<double>>E,vector<vector<dou
         }
     }
     for(int i=0; i<P;i++){
-        for (int j=0; j<3; j++){
+        for (int j=0; j<k; j++){
             res[i][j+P]=CinvD[i][j]*-1;
         }
     }
-    for(int i=0; i<3;i++){
+    for(int i=0; i<k;i++){
         for (int j=0; j<P; j++){
             res[i+P][j]=ECinv[i][j]*-1;
         }
     }
-    for(int i=0; i<3;i++){
-        for (int j=0; j<3; j++){
+    for(int i=0; i<k;i++){
+        for (int j=0; j<k; j++){
             res[i+P][j+P]=F[i][j];
         }
     }
@@ -162,13 +161,30 @@ void resultado(vector<vector<double>>D,vector<vector<double>>E,vector<vector<dou
     cout<<'\n';
 }
 
+void printMatrix(const vector<vector<double>>& M, const string& name = "") {
+    if (!name.empty()) cout << "\n" << name << ":\n";
+    if (M.empty()) { cout << "(Vacia)\n"; return; }
+    cout.setf(ios::fixed);
+    cout << setprecision(6);
+    for (size_t i = 0; i < M.size(); ++i) {
+        for (size_t j = 0; j < M[i].size(); ++j) {
+            double v = (std::fabs(M[i][j]) < 1e-10) ? 0.0 : M[i][j];
+            cout << v << "\t";
+        }
+        cout << '\n';
+    }
+    cout << '\n';
+}
+
 
 void Particionado() {
     cout << "Metodo de Particionado de Matrices\n";
     cout<<"\nIngrese el tamano de la matriz: ";
     int n, P; 
     cin>>n;
-    P=n-3;
+    cout<<"\nIngrese el tamaño de la particion (2<= P <= "<<n-2<<"):";
+    cin>>P;
+    int k=n-P;
     if (n<4){
         cout<<"\nLa cantidad de variables no son suficientes para aplicar este metodo.\n";
         return ;
@@ -197,10 +213,10 @@ void Particionado() {
             return ;
         }
     }
-    vector<vector<double>>iden=identidad(3);
-    vector<vector<double>>A22(3,vector<double>(3));
-    for(int i=0; i<3; i++){
-        for(int j=0; j<3; j++){
+    vector<vector<double>>iden=identidad(k);
+    vector<vector<double>>A22(k,vector<double>(k));
+    for(int i=0; i<k; i++){
+        for(int j=0; j<k; j++){
             A22[i][j]=mat[i+P][j+P];
         }
     }
@@ -208,12 +224,27 @@ void Particionado() {
         cout<<"\nLa matriz no tiene inversa, no se puede aplicar el metodo.\n";
         return ;
     }
-    vector<vector<double>>A22inv=inversa(A22,iden,0,3);
+    vector<vector<double>>A22inv = inversa(A22, iden, 0, k); // usar k, no 3
+    if (A22inv.empty()) {
+        cout << "\nError: no se pudo invertir A22 (posible singularidad)\n";
+        return;
+    }
+
+
+    printMatrix(A22inv, "A22 inversa");
 
     vector<vector<double>>D= getD(mat,P,A22inv);
+    printMatrix(D, "D");
+
     vector<vector<double>>E= getE(mat,P,A22inv);
+    printMatrix(E, "E");
+
     vector<vector<double>>C= getC(mat,D,P);
+    printMatrix(C, "C");
+
     vector<vector<double>>F= getF(mat,D,C,E,A22inv,P);
+    printMatrix(F, "F");
+
     resultado(D,E,C,F,ind,n,P);
-    
+    return;
 }
