@@ -86,7 +86,8 @@ int main(){
             cout<<"Selecciona el metodo a utilizar: "<<endl;
             cout<<"1. Metodo de Jacobi"<<endl;
             cout<<"2. Metodo de Gauss-Seidel"<<endl;
-            cout<<"Seleccione una opcion (1-2): ";
+            cout<<"3. Metodo de relajacion"<<endl;
+            cout<<"Seleccione una opcion (1-3): ";
             cin>>opc2;
             switch(opc2){
                 case 1:
@@ -94,6 +95,9 @@ int main(){
                     break;
                 case 2:
                     GaussSeidel();
+                    break;
+                case 3:
+                    M_relajacion();
                     break;
                 default:
                     cout<<"Opcion no valida"<<endl;

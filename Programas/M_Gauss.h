@@ -336,3 +336,125 @@ void Inversa() {
 
     return ;
 }
+void M_relajacion(){
+    int n5;
+    cout << "Tamano de la matriz: ";
+    cin >> n5;
+
+    vector<vector<double>> A(n5, vector<double>(n5));
+    vector<double> b(n5);
+
+    for (int i = 0; i < n5; i++) {
+        for (int j = 0; j < n5; j++) {
+            cout << "A[" << i+1 << "][" << j+1 << "]: ";
+            cin >> A[i][j];
+        }
+    }
+
+    for (int i = 0; i < n5; i++) {
+        cout << "b[" << i+1 << "]: ";
+        cin >> b[i];
+    }
+	bool dd = true;
+	cout << "\nDominancia diagonal:\n";
+	for (int i = 0; i < n5; i++) {
+    double suma = 0.0;
+    for (int j = 0; j < n5; j++) {
+        if (i != j) suma += fabs(A[i][j]);
+    }
+    bool fila = fabs(A[i][i]) >= suma;
+    if (!fila) dd = false;
+    cout << "Fila " << i+1 << ": " << (fila ? "verdadero" : "falso") << "\n";
+}
+double determinante = determinant(A);
+cout << "\nDeterminante de A: " << determinante << "\n";
+if (!dd) {
+    cout << "\nLa matriz no cumple dominancia diagonal. No se puede realizar el metodo.\n";
+    return;
+}
+
+
+    double tol;
+    cout << "Tolerancia: ";
+    cin >> tol;
+
+    vector<vector<double>> C(n5, vector<double>(n5));
+    vector<double> D(n5);
+    for (int i = 0; i < n5; i++) {
+        double piv = A[i][i];
+        for (int j = 0; j < n5; j++) {
+            if (i == j) C[i][j] = -1.0;
+            else C[i][j] = -A[i][j] / piv;
+        }
+        D[i] = b[i] / piv;
+    }
+
+    cout << fixed << setprecision(8);
+    cout << "\nMatriz C:\n";
+    for (int i = 0; i < n5; i++) {
+        for (int j = 0; j < n5; j++) cout << setw(12) << C[i][j];
+        cout << "\n";
+    }
+
+    cout << "\nVector D:\n";
+    for (int i = 0; i < n5; i++) cout << setw(12) << D[i];
+    cout << "\n";
+
+    vector<double> X(n5, 0.0), CX(n5, 0.0), R(n5, 0.0), Xnew(n5,0.0);
+    bool detener = false;
+    int iter = 0;
+    int iter_max = 20000;
+    const double eqeps = 1e-12;
+
+    while (!detener && iter < iter_max) {
+        cout << "\nIteracion " << iter << ":\n\n";
+
+        cout << "Vector X:\n";
+        for (int i = 0; i < n5; i++) cout << setw(12) << X[i];
+        cout << "\n\n";
+
+        for (int i = 0; i < n5; i++) {
+            double s = 0.0;
+            for (int j = 0; j < n5; j++) s += C[i][j] * X[j];
+            CX[i] = s;
+        }
+
+        cout << "Vector CX:\n";
+        for (int i = 0; i < n5; i++) cout << setw(12) << CX[i];
+        cout << "\n\n";
+
+        for (int i = 0; i < n5; i++) R[i] = CX[i] + D[i];
+
+        cout << "Vector R:\n";
+        for (int i = 0; i < n5; i++) cout << setw(12) << R[i];
+        cout << "\n\n";
+
+        double maxv = 0.0;
+        for (int i = 0; i < n5; i++) if (fabs(R[i]) > maxv) maxv = fabs(R[i]);
+        cout << "MAXIMO: " << maxv << "\n\n";
+
+        if (maxv < tol) {
+            detener = true;
+            cout << "DETENER: SI\n";
+        } else {
+            cout << "DETENER: NO\n";
+        }
+
+        for (int i = 0; i < n5; i++) {
+            if (fabs(fabs(R[i]) - maxv) < eqeps) Xnew[i] = X[i] + R[i];
+            else Xnew[i] = X[i];
+        }
+
+        X = Xnew;
+        iter++;
+    }
+
+    if (iter >= iter_max) cout << "\nEl metodo supero el numero maximo de iteraciones\n";
+
+    cout << "\nSolucion final X:\n";
+    for (int i = 0; i < n5; i++) cout << setw(12) << X[i];
+    cout << "\n";
+
+    return;
+}
+
