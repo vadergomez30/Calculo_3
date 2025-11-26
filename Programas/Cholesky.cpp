@@ -4,13 +4,296 @@
 #include <iomanip>
 using namespace std;
 
+// ======================= Funciones auxiliares =======================
+
+void imprimirMatriz(const vector<vector<double>>& M, const string& nombre) {
+    int n = M.size();
+    cout << "\n" << nombre << ":\n";
+    cout << fixed << setprecision(7);
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j < n; j++)
+            cout << setw(12) << M[i][j];
+        cout << "\n";
+    }
+}
+
+void imprimirVector(const vector<double>& v, const string& nombre) {
+    cout << "\n" << nombre << ":\n";
+    for (int i = 0; i < (int)v.size(); i++) {
+        cout << nombre << "[" << i+1 << "] = " << v[i] << "\n";
+    }
+}
+
+// ======================= CHOLESKY =======================
+
+bool cholesky(const vector<vector<double>>& A,
+              const vector<double>& b,
+              vector<vector<double>>& L,
+              vector<vector<double>>& U,
+              vector<double>& xChol) {
+    int n = A.size();
+    L.assign(n, vector<double>(n, 0.0));
+
+    // Factorización de Cholesky
+    for (int i = 0; i < n; i++) {
+        for (int j = 0; j <= i; j++) {
+
+            double suma = 0.0;
+            for (int k = 0; k < j; k++)
+                suma += L[i][k] * L[j][k];
+
+            if (i == j) {
+                double val = A[i][i] - suma;
+                if (val <= 0.0) {
+                    cerr << "ERROR: La matriz A no es definida positiva (Cholesky).\n";
+                    return false;
+                }
+                L[i][j] = sqrt(val);
+            } else {
+                L[i][j] = (A[i][j] - suma) / L[j][j];
+            }
+
+            // Mostrar L parcial
+            imprimirMatriz(L, "Matriz L (Cholesky - parcial)");
+        }
+    }
+
+    // U = L^T
+    U.assign(n, vector<double>(n, 0.0));
+    for (int i = 0; i < n; i++)
+        for (int j = 0; j < n; j++)
+            U[i][j] = L[j][i];
+
+    imprimirMatriz(U, "Matriz U = L^T (Cholesky)");
+
+    // Sustitución hacia adelante: L c = b
+    vector<double> c(n);
+    for (int i = 0; i < n; i++) {
+        double suma = 0.0;
+        for (int k = 0; k < i; k++)
+            suma += L[i][k] * c[k];
+        c[i] = (b[i] - suma) / L[i][i];
+    }
+
+    // Sustitución hacia atrás: U x = c
+    xChol.assign(n, 0.0);
+    for (int i = n-1; i >= 0; i--) {
+        double suma = 0.0;
+        for (int k = i+1; k < n; k++)
+            suma += U[i][k] * xChol[k];
+        xChol[i] = (c[i] - suma) / U[i][i];
+    }
+
+    return true;
+}
+
+// ======================= DOOLITTLE (RECURSIVO) =======================
+
+double sumaLU(const vector<vector<double>>& L,
+              const vector<vector<double>>& U,
+              int i, int j, int k) {
+    if (k < 0) return 0.0;
+    return L[i][k] * U[k][j] + sumaLU(L, U, i, j, k - 1);
+}
+
+double sumaLc(const vector<vector<double>>& L,
+              const vector<double>& c,
+              int i, int k) {
+    if (k < 0) return 0.0;
+    return L[i][k] * c[k] + sumaLc(L, c, i, k - 1);
+}
+
+double sumaUx(const vector<vector<double>>& U,
+              const vector<double>& x,
+              int i, int k) {
+    if (k <= i) return 0.0;
+    return U[i][k] * x[k] + sumaUx(U, x, i, k - 1);
+}
+
+bool doolittleRec(int p,
+                  const vector<vector<double>>& A,
+                  vector<vector<double>>& L,
+                  vector<vector<double>>& U,
+                  int n) {
+    if (p == n) return true;
+
+    // Fila p de U
+    for (int j = p; j < n; ++j) {
+        double suma = sumaLU(L, U, p, j, p - 1);
+        U[p][j] = A[p][j] - suma;
+        imprimirMatriz(U, "Matriz U (Doolittle - parcial)");
+    }
+
+    if (fabs(U[p][p]) < 1e-12) {
+        cerr << "ERROR: pivote casi cero en Doolittle U[" << p << "][" << p
+             << "]. La matriz puede requerir pivoteo.\n";
+        return false;
+    }
+
+    // Columna p de L
+    for (int i = p + 1; i < n; ++i) {
+        double suma = sumaLU(L, U, i, p, p - 1);
+        L[i][p] = (A[i][p] - suma) / U[p][p];
+        imprimirMatriz(L, "Matriz L (Doolittle - parcial)");
+    }
+
+    return doolittleRec(p + 1, A, L, U, n);
+}
+
+void forwardSubRec(const vector<vector<double>>& L,
+                   const vector<double>& b,
+                   vector<double>& c,
+                   int i, int n) {
+    if (i == n) return;
+    double suma = sumaLc(L, c, i, i - 1);
+    c[i] = (b[i] - suma) / L[i][i];
+    forwardSubRec(L, b, c, i + 1, n);
+}
+
+void backSubRec(const vector<vector<double>>& U,
+                const vector<double>& c,
+                vector<double>& x,
+                int i) {
+    if (i < 0) return;
+    int n = x.size();
+    double suma = sumaUx(U, x, i, n - 1);
+    x[i] = (c[i] - suma) / U[i][i];
+    backSubRec(U, c, x, i - 1);
+}
+
+bool doolittle(const vector<vector<double>>& A,
+               const vector<double>& b,
+               vector<vector<double>>& L,
+               vector<vector<double>>& U,
+               vector<double>& xDol) {
+    int n = A.size();
+    L.assign(n, vector<double>(n, 0.0));
+    U.assign(n, vector<double>(n, 0.0));
+
+    for (int i = 0; i < n; ++i)
+        L[i][i] = 1.0;   // diagonal de L = 1 en Doolittle
+
+    if (!doolittleRec(0, A, L, U, n))
+        return false;
+
+    imprimirMatriz(L, "Matriz L (Doolittle - final)");
+    imprimirMatriz(U, "Matriz U (Doolittle - final)");
+
+    vector<double> c(n, 0.0);
+    forwardSubRec(L, b, c, 0, n);
+
+    xDol.assign(n, 0.0);
+    backSubRec(U, c, xDol, n - 1);
+
+    return true;
+}
+
+// ======================= CROUT (TRIDIAGONAL, SEGÚN PDF) =======================
+// A debe ser tridiagonal: solo diag, subdiag y superdiag no nulos
+bool croutTridiagonal(const vector<vector<double>>& A,
+                      const vector<double>& b,
+                      vector<vector<double>>& L,
+                      vector<vector<double>>& U,
+                      vector<double>& xCrout) {
+    int n = A.size();
+    L.assign(n, vector<double>(n, 0.0));
+    U.assign(n, vector<double>(n, 0.0));
+
+    // Diagonal de U en 1 (como en el PDF)
+    for (int i = 0; i < n; ++i)
+        U[i][i] = 1.0;
+
+    // Caso n == 1
+    if (n == 1) {
+        L[0][0] = A[0][0];
+        imprimirMatriz(L, "Matriz L (Crout - parcial)");
+        imprimirMatriz(U, "Matriz U (Crout - parcial)");
+    } else {
+        // i = 0 (primera fila)
+        L[0][0] = A[0][0];
+        if (fabs(L[0][0]) < 1e-12) {
+            cerr << "ERROR: L[1][1] = 0 en Crout.\n";
+            return false;
+        }
+        imprimirMatriz(L, "Matriz L (Crout - parcial)");
+
+        U[0][1] = A[0][1] / L[0][0];   // u12 = a12 / l11
+        imprimirMatriz(U, "Matriz U (Crout - parcial)");
+
+        // Filas intermedias: i = 1 .. n-2
+        for (int i = 1; i <= n-2; ++i) {
+            // Subdiagonal de L: l_{i,i-1} = a_{i,i-1}
+            L[i][i-1] = A[i][i-1];
+            imprimirMatriz(L, "Matriz L (Crout - parcial)");
+
+            // Diagonal de L: l_{ii} = a_{ii} - l_{i,i-1} * u_{i-1,i}
+            L[i][i] = A[i][i] - L[i][i-1] * U[i-1][i];
+            if (fabs(L[i][i]) < 1e-12) {
+                cerr << "ERROR: L[" << i+1 << "][" << i+1 << "] = 0 en Crout.\n";
+                return false;
+            }
+            imprimirMatriz(L, "Matriz L (Crout - parcial)");
+
+            // Superdiagonal de U: u_{i,i+1} = a_{i,i+1} / l_{ii}
+            U[i][i+1] = A[i][i+1] / L[i][i];
+            imprimirMatriz(U, "Matriz U (Crout - parcial)");
+        }
+
+        // Última fila: i = n-1
+        int i = n - 1;
+        // Subdiagonal de L: l_{n,n-1} = a_{n,n-1}
+        L[i][i-1] = A[i][i-1];
+        imprimirMatriz(L, "Matriz L (Crout - parcial)");
+
+        // Diagonal de L: l_{nn} = a_{nn} - l_{n,n-1} * u_{n-1,n}
+        L[i][i] = A[i][i] - L[i][i-1] * U[i-1][i];
+        if (fabs(L[i][i]) < 1e-12) {
+            cerr << "ERROR: L[" << i+1 << "][" << i+1 << "] = 0 en Crout.\n";
+            return false;
+        }
+        imprimirMatriz(L, "Matriz L (Crout - parcial)");
+    }
+
+    // Mostrar matrices finales
+    imprimirMatriz(L, "Matriz L (Crout - final)");
+    imprimirMatriz(U, "Matriz U (Crout - final)");
+
+    // Sustitución hacia adelante: L c = b
+    vector<double> c(n, 0.0);
+    for (int i = 0; i < n; ++i) {
+        double suma = 0.0;
+        for (int j = 0; j < i; ++j)
+            suma += L[i][j] * c[j];
+        c[i] = (b[i] - suma) / L[i][i];
+    }
+
+    // Sustitución hacia atrás: U x = c
+    xCrout.assign(n, 0.0);
+    for (int i = n-1; i >= 0; --i) {
+        double suma = 0.0;
+        for (int j = i+1; j < n; ++j)
+            suma += U[i][j] * xCrout[j];
+        xCrout[i] = (c[i] - suma) / U[i][i]; // U[i][i] = 1
+    }
+
+    return true;
+}
+
+// ======================= MAIN =======================
+
 int main() {
     int n;
-    cout << "Metodo de Cholesky para Ax = b\n";
-    cout << "Introduce el numero de variables (dimension n): ";
+    cout << "Metodos para resolver Ax = b\n";
+    cout << "1) Cholesky\n";
+    cout << "2) Doolittle (recursivo)\n";
+    cout << "3) Crout (tridiagonal)\n";
+    cout << "Elige una opcion: ";
+    int opcion;
+    cin >> opcion;
+
+    cout << "\nIntroduce el numero de variables (dimension n): ";
     cin >> n;
 
-    // MATRIZ A y vector b
     vector<vector<double>> A(n, vector<double>(n));
     vector<double> b(n);
 
@@ -27,78 +310,37 @@ int main() {
         cin >> b[i];
     }
 
-    // MATRIZ L (triangular inferior)
-    vector<vector<double>> L(n, vector<double>(n, 0.0));
-
-    // FACTORIZACIÓN DE CHOLESKY
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j <= i; j++) {
-
-            double suma = 0.0;
-            for (int k = 0; k < j; k++)
-                suma += L[i][k] * L[j][k];
-
-            if (i == j) {
-                double val = A[i][i] - suma;
-                if (val <= 0.0) {
-                    cerr << "ERROR: La matriz A no es definida positiva.\n";
-                    return 1;
-                }
-                L[i][j] = sqrt(val);
-            } else {
-                L[i][j] = (A[i][j] - suma) / L[j][j];
+    switch (opcion) {
+        case 1: {
+            cout << "\n=== Metodo de Cholesky ===\n";
+            vector<vector<double>> L, U;
+            vector<double> xChol;
+            if (cholesky(A, b, L, U, xChol)) {
+                imprimirVector(xChol, "x (solucion por Cholesky)");
             }
+            break;
         }
+        case 2: {
+            cout << "\n=== Metodo de Doolittle (recursivo) ===\n";
+            vector<vector<double>> L, U;
+            vector<double> xDol;
+            if (doolittle(A, b, L, U, xDol)) {
+                imprimirVector(xDol, "x (solucion por Doolittle)");
+            }
+            break;
+        }
+        case 3: {
+            cout << "\n=== Metodo de Crout (tridiagonal) ===\n";
+            vector<vector<double>> L, U;
+            vector<double> xCrout;
+            if (croutTridiagonal(A, b, L, U, xCrout)) {
+                imprimirVector(xCrout, "x (solucion por Crout)");
+            }
+            break;
+        }
+        default:
+            cout << "Opcion no valida.\n";
     }
-
-    cout << fixed << setprecision(7);
-
-    // IMPRIMIR L
-    cout << "\nMatriz L (triangular inferior):\n";
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++)
-            cout << setw(12) << L[i][j];
-        cout << "\n";
-    }
-
-    // MATRIZ U = L^T
-    vector<vector<double>> U(n, vector<double>(n, 0.0));
-    for (int i = 0; i < n; i++)
-        for (int j = 0; j < n; j++)
-            U[i][j] = L[j][i];  // transposición
-
-    cout << "\nMatriz U = L^T (triangular superior):\n";
-    for (int i = 0; i < n; i++) {
-        for (int j = 0; j < n; j++)
-            cout << setw(12) << U[i][j];
-        cout << "\n";
-    }
-
-    // SUSTITUCIÓN HACIA ADELANTE: L * c = b
-    vector<double> c(n);
-    for (int i = 0; i < n; i++) {
-        double suma = 0.0;
-        for (int k = 0; k < i; k++)
-            suma += L[i][k] * c[k];
-        c[i] = (b[i] - suma) / L[i][i];
-    }
-
-    cout << "\nVector c (solucion de Lc = b):\n";
-    for (int i = 0; i < n; i++)
-        cout << "c[" << i+1 << "] = " << c[i] << "\n";
-
-    // SUSTITUCIÓN HACIA ATRÁS: U * x = c
-    vector<double> x(n);
-    for (int i = n-1; i >= 0; i--) {
-        double suma = 0.0;
-        for (int k = i+1; k < n; k++)
-            suma += U[i][k] * x[k];
-        x[i] = (c[i] - suma) / U[i][i];
-    }
-
-    cout << "\nSolucion x del sistema Ax = b:\n";
-    for (int i = 0; i < n; i++)
-        cout << "x[" << i+1 << "] = " << x[i] << "\n";
 
     return 0;
 }
