@@ -6,6 +6,7 @@
 #include "intercambioCompleto.h"
 #include "Jacobi.h"
 #include "Gauss-Seidel.h"
+#include "Cholesky.h"
 using namespace std;
 int main(){
     int opc;
@@ -13,7 +14,8 @@ int main(){
     cout<<"1. Solucion numerica de ecuaciones de una sola variable"<<endl;
     cout<<"2.Soluciones de sistemas ecuaciones lineales"<<endl;
     cout<<"3. Metodos iterativos para sistemas de ecuaciones lineales"<<endl;
-    cout<<"Seleccione una opcion (1-3): ";
+    cout<<"4. Factorizacion LU"<<endl;
+    cout<<"Seleccione una opcion (1-4): ";
     cin>>opc;
     switch(opc){
         case 1: {
@@ -102,6 +104,9 @@ int main(){
                 default:
                     cout<<"Opcion no valida"<<endl;
             }
+            break;
+        case 4:
+            menuLU();
             break;
         default:
             cout<<"Opcion no valida"<<endl;

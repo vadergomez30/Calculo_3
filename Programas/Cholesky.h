@@ -281,38 +281,38 @@ bool croutTridiagonal(const vector<vector<double>>& A,
 
 // ======================= MAIN =======================
 
-int main() {
-    int n;
+void menuLU() {
     cout << "Metodos para resolver Ax = b\n";
     cout << "1) Cholesky\n";
-    cout << "2) Doolittle (recursivo)\n";
-    cout << "3) Crout (tridiagonal)\n";
+    cout << "2) Doolittle\n";
+    cout << "3) Crout\n";
     cout << "Elige una opcion: ";
     int opcion;
     cin >> opcion;
 
-    cout << "\nIntroduce el numero de variables (dimension n): ";
-    cin >> n;
-
-    vector<vector<double>> A(n, vector<double>(n));
-    vector<double> b(n);
-
-    cout << "\nIntroduce la matriz A (" << n << "x" << n << "):\n";
-    for (int i = 0; i < n; i++)
-        for (int j = 0; j < n; j++) {
-            cout << "A[" << i+1 << "][" << j+1 << "]: ";
-            cin >> A[i][j];
-        }
-
-    cout << "\nIntroduce el vector b:\n";
-    for (int i = 0; i < n; i++) {
-        cout << "b[" << i+1 << "]: ";
-        cin >> b[i];
-    }
-
     switch (opcion) {
         case 1: {
             cout << "\n=== Metodo de Cholesky ===\n";
+            int n;
+            cout << "Introduce el numero de variables (dimension n): ";
+            cin >> n;
+
+            vector<vector<double>> A(n, vector<double>(n));
+            vector<double> b(n);
+
+            cout << "\nIntroduce la matriz A (" << n << "x" << n << "):\n";
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < n; j++) {
+                    cout << "A[" << i+1 << "][" << j+1 << "]: ";
+                    cin >> A[i][j];
+                }
+
+            cout << "\nIntroduce el vector b:\n";
+            for (int i = 0; i < n; i++) {
+                cout << "b[" << i+1 << "]: ";
+                cin >> b[i];
+            }
+
             vector<vector<double>> L, U;
             vector<double> xChol;
             if (cholesky(A, b, L, U, xChol)) {
@@ -322,6 +322,26 @@ int main() {
         }
         case 2: {
             cout << "\n=== Metodo de Doolittle (recursivo) ===\n";
+            int n;
+            cout << "Introduce el numero de variables (dimension n): ";
+            cin >> n;
+
+            vector<vector<double>> A(n, vector<double>(n));
+            vector<double> b(n);
+
+            cout << "\nIntroduce la matriz A (" << n << "x" << n << "):\n";
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < n; j++) {
+                    cout << "A[" << i+1 << "][" << j+1 << "]: ";
+                    cin >> A[i][j];
+                }
+
+            cout << "\nIntroduce el vector b:\n";
+            for (int i = 0; i < n; i++) {
+                cout << "b[" << i+1 << "]: ";
+                cin >> b[i];
+            }
+
             vector<vector<double>> L, U;
             vector<double> xDol;
             if (doolittle(A, b, L, U, xDol)) {
@@ -331,6 +351,26 @@ int main() {
         }
         case 3: {
             cout << "\n=== Metodo de Crout (tridiagonal) ===\n";
+            int n;
+            cout << "Introduce el numero de variables (dimension n): ";
+            cin >> n;
+
+            vector<vector<double>> A(n, vector<double>(n));
+            vector<double> b(n);
+
+            cout << "\nIntroduce la matriz A tridiagonal (" << n << "x" << n << "):\n";
+            for (int i = 0; i < n; i++)
+                for (int j = 0; j < n; j++) {
+                    cout << "A[" << i+1 << "][" << j+1 << "]: ";
+                    cin >> A[i][j];
+                }
+
+            cout << "\nIntroduce el vector b:\n";
+            for (int i = 0; i < n; i++) {
+                cout << "b[" << i+1 << "]: ";
+                cin >> b[i];
+            }
+
             vector<vector<double>> L, U;
             vector<double> xCrout;
             if (croutTridiagonal(A, b, L, U, xCrout)) {
@@ -342,5 +382,5 @@ int main() {
             cout << "Opcion no valida.\n";
     }
 
-    return 0;
+    return;
 }
