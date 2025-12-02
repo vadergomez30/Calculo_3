@@ -4,6 +4,7 @@
 #include <cmath>
 #include <string>
 #include <algorithm>
+#include <cstdlib>  // <-- para system("pause")
 using std::cin;
 using std::cout;
 using std::endl;
@@ -116,7 +117,6 @@ SolveResult metodoIntercambio(Mat A, const vector<double>& b_in)
              << ": entra x" << colLab[k]
              << "  y  sale b" << rowLab[l] << "\n";
 
-        // Guardar fila/columna necesarios
         // --- Paso 2: a_ij = a_ij - (a_ik * a_lj)/a_lk    (i != l, j != k)
         for (int i = 0; i < n; ++i) if (i != l) {
             for (int j = 0; j < n; ++j) if (j != k) {
@@ -155,16 +155,16 @@ SolveResult metodoIntercambio(Mat A, const vector<double>& b_in)
     return {true, Ainv, x, ""};
 }
 
-// ---------- Programa principal ----------
+// ---------- Programa principal del método ----------
 void Intercambio(){
     //std::ios::sync_with_stdio(false);
-    
 
     int n;
     cout << "Ingrese n (tamano de A): ";
     if(!(cin >> n) || n <= 0){
         cout << "n invalido.\n";
-        return ;
+        system("pause");
+        return;
     }
 
     Mat A(n, vector<double>(n, 0.0));
@@ -186,6 +186,7 @@ void Intercambio(){
     auto res = metodoIntercambio(A, b);
     if(!res.ok){
         cout << "\nError: " << res.msg << "\n";
+        system("pause");
         return;
     }
 
@@ -206,7 +207,7 @@ void Intercambio(){
         cout << "x" << (i+1) << " = " << y << "\n";
     }
     cout << endl;
-    return;
 
-    cin.tie(nullptr);
+    system("pause");
+    return;
 }

@@ -1,6 +1,9 @@
 #include <bits/stdc++.h>
+#include <cstdlib>   // <-- necesario para system("pause")
 using namespace std; 
 using Mat = vector<vector<double>>;
+
+// Se asume que EXISTE determinant(A) en otro archivo que compilas junto con este.
 
 bool supuestos(const Mat& A){
     int n=A.size();
@@ -11,9 +14,9 @@ bool supuestos(const Mat& A){
             if(j==i) continue;
             suma+=fabs(A[i][j]);
         }
-        if(diag < suma) return false;
+        if(diag < suma) return false;  // falla dominancia diagonal
     }
-    return (determinant(A)==0)? false: true;
+    return (determinant(A)==0)? false: true;  // debe ser no singular
 }
 
 bool detener(const vector<double> &x_ant, const vector<double> &x_nue, const double &error){
@@ -25,25 +28,30 @@ bool detener(const vector<double> &x_ant, const vector<double> &x_nue, const dou
     return true;
 }
 
-void iterativoJacobi(const Mat&A, const vector<double>&b, vector<double>&x_ant, vector<double>&x_nue, const double error, int &count){
+void iterativoJacobi(const Mat&A, const vector<double>&b,
+                     vector<double>&x_ant, vector<double>&x_nue,
+                     const double error, int &count){
+    
     for(size_t i=0; i<A.size(); i++){
         double res=b[i];
         for (size_t j=0; j<A[0].size(); j++){
             if(j==i) continue;
-            res-=A[i][j]*x_ant[j];
+            res -= A[i][j] * x_ant[j];
         }
-        x_nue[i]=1/A[i][i] * res;
+        x_nue[i] = (1.0 / A[i][i]) * res;
     }
+
     cout<<"\nIteracion "<<++count<<endl;
     cout<<"Solucion X: ";
-    for(auto i: x_nue){
-        cout<<i<<" ";
-    } 
+    for(double v: x_nue){
+        cout<<v<<" ";
+    }
+
     if(detener(x_ant, x_nue, error)){
-        cout<<"\nConvergencia alcanzada despues de "<<count<<" iteraciones."<<endl;
+        cout<<"\nConvergencia alcanzada despues de "<<count<<" iteraciones.\n";
         return;
     } else {
-        x_ant=x_nue;
+        x_ant = x_nue;
         iterativoJacobi(A, b, x_ant, x_nue, error, count);
     }
 }
@@ -51,10 +59,13 @@ void iterativoJacobi(const Mat&A, const vector<double>&b, vector<double>&x_ant, 
 void Jacobi(){
     int n, count=0;
     double error;
+
     cout << "Ingrese el tamano n de la matriz (n x n): "<<endl;
     cin >> n;
+
     cout << "Ingrese el error tolerable: "<<endl;
     cin >> error;
+
     Mat A(n, vector<double>(n,0.0));
     cout << "Ingrese la matriz A ("<<n<<"x"<<n<<"), por filas:\n";
     for(int i=0;i<n;i++){
@@ -62,16 +73,26 @@ void Jacobi(){
             cin>>A[i][j];
         }
     }
+
     vector<double> b(n,0.0);
     cout << "Ingrese el vector b ("<<n<<" valores):\n";
     for(int i=0;i<n;i++){
         cin>>b[i];
     }
+
+    // Verificar supuestos antes de iterar
     if(!supuestos(A)){
-        cout<<"La matriz no cumple los supuestos necesarios (dominancia diagonal y no singularidad).\n";
+        cout<<"La matriz no cumple los supuestos necesarios "
+              "(dominancia diagonal y no singularidad).\n";
+        system("pause");      // <-- PAUSA POR SI HAY ERROR
         return;
     }
+
     vector<double> x_ant(n,0.0);
     vector<double> x_nue(n,0.0);
+
     iterativoJacobi(A, b, x_ant, x_nue, error, count);
+
+    // Pausa final para que la ventana no se cierre
+    system("pause");
 }

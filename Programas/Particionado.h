@@ -2,7 +2,9 @@
 #include <vector>
 #include <iomanip>
 #include <cmath>
+#include <cstdlib>  // <-- para system("pause")
 using namespace std;
+
 vector<vector<double>> identidad(int n) {
     vector<vector<double>>pos(n,vector<double>(n));
     for(int i=0; i<n; i++){
@@ -13,6 +15,7 @@ vector<vector<double>> identidad(int n) {
     }
     return pos;
 }
+
 vector<vector<double>> inversa(vector<vector<double>>& mat, vector<vector<double>>& iden, int k, int n) {
     if (k >= n) return iden;
     double factor = mat[k][k];
@@ -39,7 +42,7 @@ vector<vector<double>> mMUlt(const vector<vector<double>>& A, const vector<vecto
     vector<vector<double>> C(n,vector<double>(m,0));
     for (int i = 0; i < n; i++){
         for (int j = 0; j < m; j++){
-            for (int k = 0; k < B.size(); k++){
+            for (int k = 0; k < (int)B.size(); k++){
                 C[i][j] += A[i][k] * B[k][j];
             }
         }
@@ -57,6 +60,7 @@ vector<vector<double>> getD(vector<vector<double>> mat,int P,vector<vector<doubl
     }
     return mMUlt(A12, A22inv);
 }
+
 vector<vector<double>> getE(vector<vector<double>> mat,int P,vector<vector<double>> A22inv){
     int k=mat.size()-P;
     vector<vector<double>>A21(k,vector<double>(P));
@@ -67,6 +71,7 @@ vector<vector<double>> getE(vector<vector<double>> mat,int P,vector<vector<doubl
     }
     return mMUlt(A22inv,A21);
 }
+
 vector<vector<double>> getC(vector<vector<double>>&mat,vector<vector<double>> D,int P){
     int k=mat.size()-P;
     vector<vector<double>>A21(k,vector<double>(P));
@@ -92,6 +97,7 @@ vector<vector<double>> getC(vector<vector<double>>&mat,vector<vector<double>> D,
     }
     return C;
 }
+
 vector<vector<double>> getF(vector<vector<double>> mat,vector<vector<double>> D,vector<vector<double>> C,vector<vector<double>> E,vector<vector<double>>A22inv ,int &P){
     int k=mat.size()-P;
     vector<vector<double>>idenC=identidad(P);
@@ -108,6 +114,7 @@ vector<vector<double>> getF(vector<vector<double>> mat,vector<vector<double>> D,
     return F;
 
 }
+
 void resultado(vector<vector<double>>D,vector<vector<double>>E,vector<vector<double>>C,vector<vector<double>>F,vector<double>ind,int n, int P){
     int k=n-P;
     vector<vector<double>>idenC=identidad(P);
@@ -177,20 +184,40 @@ void printMatrix(const vector<vector<double>>& M, const string& name = "") {
 }
 
 
+// OJO: aquí asumo que tienes definida determinant(const vector<vector<double>>&)
+//      en otro archivo y la linkeas con este.
+
 void Particionado() {
     cout << "Metodo de Particionado de Matrices\n";
     cout<<"\nIngrese el tamano de la matriz: ";
     int n, P; 
     cin>>n;
+
+    if (!cin || n <= 0) {
+        cout << "\nTamano de matriz invalido.\n";
+        system("pause");
+        return;
+    }
+
     cout<<"\nIngrese el tamaño de la particion (2<= P <= "<<n-2<<"):";
     cin>>P;
+
+    if (!cin || P < 2 || P > n-2) {
+        cout << "\nLa particion P no es valida.\n";
+        system("pause");
+        return;
+    }
+
     int k=n-P;
     if (n<4){
         cout<<"\nLa cantidad de variables no son suficientes para aplicar este metodo.\n";
+        system("pause");
         return ;
     }
+
     vector<vector<double>> mat(n, vector<double>(n));
     vector<double>ind(n);
+
     cout<<"\nIngrese los elementos de su matriz de coeficientes: \n";
     for(int i=0; i<n; i++){
         cout<< "\nFila "<<i+1<<": \n";
@@ -198,21 +225,27 @@ void Particionado() {
             cin>>mat[i][j];
         }
     }
+
     if (determinant(mat) == 0){
         cout<<"\nLa matriz no tiene solucion unica, no se puede aplicar el metodo.\n";
+        system("pause");
         return ;
     }
+
     cout<<"\nIngrese los elementos de su vector independiente: \n";
     for(int i=0; i<n; i++){
         cout<<"Independiente "<<i+1<<": ";
         cin>>ind[i];
     }
+
     for(int i=0; i<n; i++){
         if(mat[i][i] == 0.0){
             cout<<"\nLa matriz contiene un 0 en la diagonal\n";
+            system("pause");
             return ;
         }
     }
+
     vector<vector<double>>iden=identidad(k);
     vector<vector<double>>A22(k,vector<double>(k));
     for(int i=0; i<k; i++){
@@ -220,16 +253,19 @@ void Particionado() {
             A22[i][j]=mat[i+P][j+P];
         }
     }
+
     if (determinant(A22) == 0){
-        cout<<"\nLa matriz no tiene inversa, no se puede aplicar el metodo.\n";
+        cout<<"\nLa submatriz A22 no tiene inversa, no se puede aplicar el metodo.\n";
+        system("pause");
         return ;
     }
-    vector<vector<double>>A22inv = inversa(A22, iden, 0, k); // usar k, no 3
+
+    vector<vector<double>>A22inv = inversa(A22, iden, 0, k); 
     if (A22inv.empty()) {
         cout << "\nError: no se pudo invertir A22 (posible singularidad)\n";
+        system("pause");
         return;
     }
-
 
     printMatrix(A22inv, "A22 inversa");
 
@@ -246,5 +282,7 @@ void Particionado() {
     printMatrix(F, "F");
 
     resultado(D,E,C,F,ind,n,P);
+
+    system("pause");
     return;
 }

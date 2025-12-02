@@ -2,6 +2,7 @@
 #include <vector>
 #include <cmath>
 #include <iomanip>
+#include <cstdlib> // <-- para system("pause")
 using namespace std;
 
 // ======================= Funciones auxiliares =======================
@@ -29,7 +30,7 @@ void imprimirVector(const vector<double>& v, const string& nombre) {
 bool cholesky(const vector<vector<double>>& A,
               const vector<double>& b,
               vector<vector<double>>& L,
-              vector<vector<double>>& U,
+                            vector<vector<double>>& U,
               vector<double>& xChol) {
     int n = A.size();
     L.assign(n, vector<double>(n, 0.0));
@@ -46,6 +47,7 @@ bool cholesky(const vector<vector<double>>& A,
                 double val = A[i][i] - suma;
                 if (val <= 0.0) {
                     cerr << "ERROR: La matriz A no es definida positiva (Cholesky).\n";
+                    system("pause");
                     return false;
                 }
                 L[i][j] = sqrt(val);
@@ -127,6 +129,7 @@ bool doolittleRec(int p,
     if (fabs(U[p][p]) < 1e-12) {
         cerr << "ERROR: pivote casi cero en Doolittle U[" << p << "][" << p
              << "]. La matriz puede requerir pivoteo.\n";
+        system("pause");
         return false;
     }
 
@@ -213,6 +216,7 @@ bool croutTridiagonal(const vector<vector<double>>& A,
         L[0][0] = A[0][0];
         if (fabs(L[0][0]) < 1e-12) {
             cerr << "ERROR: L[1][1] = 0 en Crout.\n";
+            system("pause");
             return false;
         }
         imprimirMatriz(L, "Matriz L (Crout - parcial)");
@@ -230,6 +234,7 @@ bool croutTridiagonal(const vector<vector<double>>& A,
             L[i][i] = A[i][i] - L[i][i-1] * U[i-1][i];
             if (fabs(L[i][i]) < 1e-12) {
                 cerr << "ERROR: L[" << i+1 << "][" << i+1 << "] = 0 en Crout.\n";
+                system("pause");
                 return false;
             }
             imprimirMatriz(L, "Matriz L (Crout - parcial)");
@@ -249,6 +254,7 @@ bool croutTridiagonal(const vector<vector<double>>& A,
         L[i][i] = A[i][i] - L[i][i-1] * U[i-1][i];
         if (fabs(L[i][i]) < 1e-12) {
             cerr << "ERROR: L[" << i+1 << "][" << i+1 << "] = 0 en Crout.\n";
+            system("pause");
             return false;
         }
         imprimirMatriz(L, "Matriz L (Crout - parcial)");
@@ -318,6 +324,7 @@ void menuLU() {
             if (cholesky(A, b, L, U, xChol)) {
                 imprimirVector(xChol, "x (solucion por Cholesky)");
             }
+            system("pause");
             break;
         }
         case 2: {
@@ -347,6 +354,7 @@ void menuLU() {
             if (doolittle(A, b, L, U, xDol)) {
                 imprimirVector(xDol, "x (solucion por Doolittle)");
             }
+            system("pause");
             break;
         }
         case 3: {
@@ -376,10 +384,12 @@ void menuLU() {
             if (croutTridiagonal(A, b, L, U, xCrout)) {
                 imprimirVector(xCrout, "x (solucion por Crout)");
             }
+            system("pause");
             break;
         }
         default:
             cout << "Opcion no valida.\n";
+            system("pause");
     }
 
     return;

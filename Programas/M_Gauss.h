@@ -1,6 +1,10 @@
 #include <iostream>
 #include <vector>
+#include <cmath>    // fabs, etc.
+#include <iomanip>  // setw, setprecision
+#include <cstdlib>  // system("pause")
 using namespace std;
+
 vector<vector<double>> getSubmatrix(const vector<vector<double>>& mat, int row, int col) {
     int n = mat.size();
     vector<vector<double>> submat(n - 1, vector<double>(n - 1));
@@ -57,15 +61,16 @@ void Gauss() {
         cout << endl;
     }
 
-
     cout << "El determinante es: " << determinant(mat) << endl;
 
-    //MÃ©todo
+    //Método
     if (determinant(mat)==0){
         cout << "No es posible aplicar el metodo...\n";
+        system("pause");
+        return;
     }
 
-    //Vector de tÃ©rminos independientes
+    //Vector de términos independientes
     cout << "\nIngrese el vector de terminos independientes b (" << n << "x1):\n";
     for (i = 0; i < n; i++) {
         cout << "b[" << i+1 << "]: ";
@@ -76,35 +81,16 @@ void Gauss() {
         cout << b[i] << endl;
     }
 
-
-
-
-    //FÃ³rmulas para la TriangularizaciÃ³n del sistema de ecuaciones de la matriz aumentada
-    /*
-    for ( i = 0; i < n-1; i++){
-        for (j = i+1; j < n; j++){
-            b[j]=b[j]-(mat[j][i]/mat[i][i])*b[j];
-        }
-        for (k = n; k < i; k++){
-            if (k==i){
-                mat[j][k]=0;
-                if (j!=i){
-                    mat[j][k]=mat[j][k]-(mat[i][k]*mat[j][i])/mat[i][i];
-                }
-                
-            }
-        }
-
-    }
-    */
-
-    //Hola 
-
-
-    // --- EliminaciÃ³n Gaussiana ---
+    // --- Eliminación Gaussiana ---
     for (k = 0; k < n - 1; k++) {
+        double piv = mat[k][k];
+        if (fabs(piv) < 1e-12) {
+            cout << "\nPivote casi cero en la fila " << k+1 << ". No se puede continuar.\n";
+            system("pause");
+            return;
+        }
         for (i = k + 1; i < n; i++) {
-            double factor = mat[i][k] / mat[k][k];
+            double factor = mat[i][k] / piv;
             for (j = k; j < n; j++) {
                 mat[i][j] -= factor * mat[k][j];
             }
@@ -112,32 +98,29 @@ void Gauss() {
         }
     }
 
-
     //Revisar nuevas matrices
-    cout << "\n\t--Nuevas MAtrices--\n";
+    cout << "\n\t--Nuevas Matrices--\n";
 
     cout << "\nLa matriz transformada:\n"; 
     for (i = 0; i < n; i++) {
         for (j = 0; j < n; j++) {
             //Para evitar errores de redondeo:
-            if (abs(mat[i][j]) < 1e-10){  // Si es muy cercano a 0
-            cout << 0 << "\t";
+            if (fabs(mat[i][j]) < 1e-10){  // Si es muy cercano a 0
+                cout << 0 << "\t";
             }
             else{
-            cout << mat[i][j] << "\t";
+                cout << mat[i][j] << "\t";
             }
-            //cout << mat[i][j] << "\t";
         }
         cout << endl;
     }
-
 
     cout << "\nVector b (transformado):\n";
     for (i = 0; i < n; i++) {
         cout << b[i] << endl;
     }
 
-    // --- SustituciÃ³n regresiva ---
+    // --- Sustitución regresiva ---
     for (i = n - 1; i >= 0; i--) {
         double suma = 0;
         for (j = i + 1; j < n; j++) {
@@ -150,14 +133,16 @@ void Gauss() {
         cout << "x[" << i+1 << "] = " << Res[i] << endl;
     }
 
-
+    system("pause");
 }
+
 void recursiva(vector<vector<double>>& mat, vector<double>&ind,int k, int n){ //Crea la matriz identidad mediante gauss-jordan
     if(k==n){
         cout<<"\nLos valores para x son: ";
         for(int i=0; i<n; i++){
             cout<<"\nx"<<i+1<<" = "<<ind[i]<<" ";
         }
+        cout << "\n";
         return;
     }
     cout<<"\niteracion: "<<k+1<<'\n';
@@ -214,6 +199,7 @@ void GaussJordan() {
     
     if(determinant(mat) == 0){
         cout<<"La matriz no tiene solucion unica\n";
+        system("pause");
         return ;
     }
 
@@ -225,6 +211,7 @@ void GaussJordan() {
     for(int i=0; i<n; i++){
         if(mat[i][i] == 0.0){
             cout<<"La matriz contiene un 0 en la diagonal\n";
+            system("pause");
             return ;
         }
     }
@@ -232,9 +219,10 @@ void GaussJordan() {
     recursiva(mat,ind,k, n);
     cout<<'\n';
 
-
+    system("pause");
     return ;
 }
+
 vector<vector<double>> identidad2(int n) {
     vector<vector<double>>pos(n,vector<double>(n));
     for(int i=0; i<n; i++){
@@ -245,6 +233,7 @@ vector<vector<double>> identidad2(int n) {
     }
     return pos;
 }
+
 void resultado(vector<vector<double>>& iden, vector<double>& ind, int n){
     vector<double> solucion(n,0);
     for(int i=0; i<n; i++){
@@ -299,6 +288,7 @@ void recursiva2(vector<vector<double>>& mat, vector<vector<double>>& iden, int k
 
     recursiva2(mat, iden, k+1, ind, n);
 }
+
 void Inversa() {
     cout<<"Metodo de Inversion de Matrices\n";
     cout<<"\nIngrese el tamano de la matriz: ";
@@ -315,6 +305,7 @@ void Inversa() {
     
     if(determinant(mat) == 0){
         cout<<"\nLa matriz no tiene solucion unica\n";
+        system("pause");
         return ;
     }
 
@@ -326,6 +317,7 @@ void Inversa() {
     for(int i=0; i<n; i++){
         if(mat[i][i] == 0.0){
             cout<<"\nLa matriz contiene un 0 en la diagonal\n";
+            system("pause");
             return ;
         }
     }
@@ -333,9 +325,10 @@ void Inversa() {
     recursiva2(mat,iden,k,ind,n);
     cout<<'\n';
 
-
+    system("pause");
     return ;
 }
+
 void M_relajacion(){
     int n5;
     cout << "Tamano de la matriz: ";
@@ -355,24 +348,27 @@ void M_relajacion(){
         cout << "b[" << i+1 << "]: ";
         cin >> b[i];
     }
-	bool dd = true;
-	cout << "\nDominancia diagonal:\n";
-	for (int i = 0; i < n5; i++) {
-    double suma = 0.0;
-    for (int j = 0; j < n5; j++) {
-        if (i != j) suma += fabs(A[i][j]);
-    }
-    bool fila = fabs(A[i][i]) >= suma;
-    if (!fila) dd = false;
-    cout << "Fila " << i+1 << ": " << (fila ? "verdadero" : "falso") << "\n";
-}
-double determinante = determinant(A);
-cout << "\nDeterminante de A: " << determinante << "\n";
-if (!dd) {
-    cout << "\nLa matriz no cumple dominancia diagonal. No se puede realizar el metodo.\n";
-    return;
-}
 
+    bool dd = true;
+    cout << "\nDominancia diagonal:\n";
+    for (int i = 0; i < n5; i++) {
+        double suma = 0.0;
+        for (int j = 0; j < n5; j++) {
+            if (i != j) suma += fabs(A[i][j]);
+        }
+        bool fila = fabs(A[i][i]) >= suma;
+        if (!fila) dd = false;
+        cout << "Fila " << i+1 << ": " << (fila ? "verdadero" : "falso") << "\n";
+    }
+
+    double determinante = determinant(A);
+    cout << "\nDeterminante de A: " << determinante << "\n";
+
+    if (!dd) {
+        cout << "\nLa matriz no cumple dominancia diagonal. No se puede realizar el metodo.\n";
+        system("pause");
+        return;
+    }
 
     double tol;
     cout << "Tolerancia: ";
@@ -455,6 +451,6 @@ if (!dd) {
     for (int i = 0; i < n5; i++) cout << setw(12) << X[i];
     cout << "\n";
 
+    system("pause");
     return;
 }
-

@@ -1,6 +1,10 @@
 #include <bits/stdc++.h>
+#include <cstdlib>  // <-- para system("pause")
 using namespace std; 
 using Mat = vector<vector<double>>;
+
+// OJO: aquí se asume que existe determinant(const Mat& A) en otro archivo
+// y que se linkea junto con este.
 
 bool supuestos2(const Mat& A){
     int n=A.size();
@@ -11,8 +15,9 @@ bool supuestos2(const Mat& A){
             if(j==i) continue;
             suma+=fabs(A[i][j]);
         }
-        if(diag < suma) return false;
+        if(diag < suma) return false;   // falla dominancia diagonal
     }
+    // además, debe ser no singular
     return (determinant(A)==0)? false: true;
 }
 
@@ -55,6 +60,7 @@ void GaussSeidel(){
     cin >> n;
     cout << "Ingrese el error tolerable: "<<endl;
     cin >> error;
+
     Mat A(n, vector<double>(n,0.0));
     cout << "Ingrese la matriz A ("<<n<<"x"<<n<<"), por filas:\n";
     for(int i=0;i<n;i++){
@@ -62,16 +68,24 @@ void GaussSeidel(){
             cin>>A[i][j];
         }
     }
+
     vector<double> b(n,0.0);
     cout << "Ingrese el vector b ("<<n<<" valores):\n";
     for(int i=0;i<n;i++){
         cin>>b[i];
     }
+
     if(!supuestos2(A)){
         cout<<"La matriz no cumple los supuestos necesarios (dominancia diagonal y no singularidad).\n";
+        system("pause");
         return;
     }
+
     vector<double> x_ant(n,0.0);
     vector<double> x_nue(n,0.0);
+
     iterativoGaussSeidel(A, b, x_ant, x_nue, error, count);
+
+    // Pausa al final para que puedas ver la solución antes de que se cierre
+    system("pause");
 }
