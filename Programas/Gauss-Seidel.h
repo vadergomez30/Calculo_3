@@ -1,11 +1,7 @@
 #include <bits/stdc++.h>
-#include <cstdlib>  // <-- para system("pause")
+#include <cstdlib> 
 using namespace std; 
 using Mat = vector<vector<double>>;
-
-// OJO: aquí se asume que existe determinant(const Mat& A) en otro archivo
-// y que se linkea junto con este.
-
 bool supuestos2(const Mat& A){
     int n=A.size();
     for(int i=0;i<n;i++){
@@ -15,9 +11,8 @@ bool supuestos2(const Mat& A){
             if(j==i) continue;
             suma+=fabs(A[i][j]);
         }
-        if(diag < suma) return false;   // falla dominancia diagonal
+        if(diag < suma) return false;  
     }
-    // además, debe ser no singular
     return (determinant(A)==0)? false: true;
 }
 
@@ -85,7 +80,5 @@ void GaussSeidel(){
     vector<double> x_nue(n,0.0);
 
     iterativoGaussSeidel(A, b, x_ant, x_nue, error, count);
-
-    // Pausa al final para que puedas ver la solución antes de que se cierre
     system("pause");
 }

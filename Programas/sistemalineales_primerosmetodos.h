@@ -4,7 +4,6 @@ using namespace std;
 #define db double
 #define MAX_ITER 2000
 #define kn 1000
-// Funciones matemáticas
 db f1(db x) { return sin(x) + cos(x); }
 db df1(db x) { return cos(x) - sin(x); }
 
@@ -17,12 +16,11 @@ db df3(db x) { return 2 * x * sin(x) * (sin(x) + x * cos(x)); }
 db f4(db x) { return exp(x) * sin(x); }
 db df4(db x) { return exp(x) * (sin(x) + cos(x)); }
 
-// Función principal que hace todo
 void ejecutarNewtonRaphson() { 
     int opc;
     
     do {
-        // Mostrar menú
+        
         cout << "Metodo de Newton-Raphson\n\nSelecciona una funcion (1-4):\n\n";
         cout << "1. f(x)=sen(x)+cos(x)\n";
         cout << "2. f(x)=(x-5)(x+3)cos^3(x)\n";
@@ -35,7 +33,7 @@ void ejecutarNewtonRaphson() {
         if (opc >= 1 && opc <= 4) {
             db x, error;
             
-            // Solicitar datos
+           
             switch(opc) {
                 case 1: cout << "\nf(x)=sen(x)+cos(x)\n"; break;
                 case 2: cout << "\nf(x)=(x-5)(x+3)cos^3(x)\n"; break;
@@ -48,13 +46,13 @@ void ejecutarNewtonRaphson() {
             cout << "Ingrese el error de tolerancia: ";
             cin >> error;
             
-            // Aplicar Newton-Raphson
+            
             bool exito = true;
             int iteraciones = 0;
             db (*f)(db) = nullptr;
             db (*df)(db) = nullptr;
             
-            // Seleccionar función y derivada
+           
             switch(opc) {
                 case 1: f = f1; df = df1; break;
                 case 2: f = f2; df = df2; break;
@@ -62,7 +60,7 @@ void ejecutarNewtonRaphson() {
                 case 4: f = f4; df = df4; break;
             }
             
-            // Algoritmo de Newton-Raphson
+           
             while (abs(f(x)) > error && iteraciones < 1000) {
                 if (df(x) == 0) {
                     cout << "\nError: Derivada cero. Da otro valor inicial.\n";
@@ -74,7 +72,7 @@ void ejecutarNewtonRaphson() {
                 iteraciones++;
             }
             
-            // Mostrar resultado
+           
             if (exito && iteraciones < 1000) {
                 cout << "\nLa raiz es: " << x << '\n';
                 cout << "Iteraciones realizadas: " << iteraciones << '\n';
@@ -91,13 +89,12 @@ void ejecutarNewtonRaphson() {
     
     cout << "Programa terminado.\n";
 }
-// Funciones matemáticas
+
 double func1(float x) { return sin(x) + cos(x); }
 double func2(float x) { return (x - 5) * (x + 3) * pow(cos(x), 3); }
 double func3(float x) { return x * x * pow(sin(x), 2); }
 double func4(float x) { return exp(x) * sin(x); }
 
-// Función principal que hace todo
 void ejecutarMetodoSecante() {
     int opc, iteraciones;
     float x0, x1, error;
@@ -122,7 +119,6 @@ void ejecutarMetodoSecante() {
     int i = 0;
     bool raizEncontrada = false;
     
-    // Seleccionar la función según la opción
     double (*func)(float) = nullptr;
     
     switch (opc) {
@@ -135,12 +131,12 @@ void ejecutarMetodoSecante() {
             return;
     }
     
-    // Aplicar método de la secante
+   
     while (i < iteraciones) {
         float f0 = func(x0);
         float f1 = func(x1);
         
-        // Evitar división por cero
+       
         if (fabs(f0 - f1) < 1e-10) {
             cout << "Error: Division por cero. Los puntos tienen valores de funcion muy cercanos.\n";
             break;
@@ -171,9 +167,9 @@ float funcion2(float x) { return ((x - 5) * (x + 3) * pow(cos(x), 3)); }
 float funcion3(float x) { return (2 * x * pow(sin(x), 2) + 2 * pow(x, 2) * cos(x) * sin(x)); }
 float funcion4(float x) { return (exp(x) * sin(x)); }
 
-// Función principal que hace todo
+
 void ejecutarMetodoBiseccion() {
-    // Declaramos un arreglo de punteros a funciones que devuelven float
+    
     float (*funciones[4])(float) = { funcion1, funcion2, funcion3, funcion4 };
 
     float a, b, x, fa, fb, fx;
@@ -193,7 +189,7 @@ void ejecutarMetodoBiseccion() {
         return;
     }
 
-    // Datos para evaluar
+    
     cout << "Ingrese el intervalo [a,b]\n";
     cout << "Ingrese a: ";
     cin >> a;
@@ -202,7 +198,7 @@ void ejecutarMetodoBiseccion() {
     cout << "Ingresa el error: ";
     cin >> error;
 
-    // Supuestos de aplicación
+   
     fa = funciones[op - 1](a);
     fb = funciones[op - 1](b);
     
@@ -211,7 +207,7 @@ void ejecutarMetodoBiseccion() {
         return;
     }
     
-    // Validación de caso especial 3
+   
     if (op == 3) {
         if (funciones[2](b) < 0) {
             cout << "\nNo existe cambio de signo. No se puede aplicar el metodo...\n";
@@ -219,7 +215,7 @@ void ejecutarMetodoBiseccion() {
         }
     }
 
-    // Una vez se tienen los supuestos
+    
     do {
         fa = funciones[op - 1](a);
         fb = funciones[op - 1](b);        
@@ -233,7 +229,7 @@ void ejecutarMetodoBiseccion() {
             raiz = true;
         }
 
-        // Ecuación Recursiva
+        
         x = (a + b) / 2;
         fx = funciones[op - 1](x);
 
@@ -267,10 +263,10 @@ double f1(float x){
 double f1_1(float x){
     return cos(x)-sin(x);
 }
-double f2_a(float x){  // Cambié f2_22 por f2 para consistencia
+double f2_a(float x){  
     return (x-5)*(x+3)*pow(cos(x),3);
 }
-double f2_1d(float x){  // Cambié f2_12 por f2_1 para consistencia
+double f2_1d(float x){  
     return pow(cos(x),2)*( 2*(x-1)*cos(x)-3*(x*x-2*x-15)*sin(x) );
 }
 double f3(float x){
@@ -285,7 +281,7 @@ double f4_a(float x){
 double f4_1d(float x){
     return exp(x)*(sin(x)+cos(x));
 }
-// Función principal única que contiene toda la lógica
+
 void ejecutarFalsaPosicion() {
     double a,b,error;
     int opc;
@@ -331,7 +327,7 @@ void ejecutarFalsaPosicion() {
             cout<<"Ingrese el valor de a: ";cin>>a;
             cout<<"Ingrese el valor de b: ";cin>>b;
             cout<<"Ingrese el valor del error: ";cin>>error;
-            if(f2(a)*f2(b) < 0){  // Corregido: f2_22 por f2
+            if(f2(a)*f2(b) < 0){  
                 cout<<"Se puede aplicar el metodo"<<endl;
             }
             else{
@@ -339,14 +335,14 @@ void ejecutarFalsaPosicion() {
                 return;
             }
             for(int j=0;j<kn;j++){
-                long double xr=a-f2_a(a)*(b-a)/(f2_a(b)-f2_a(a));  // Corregido: f2_22 por f2
-                if(f2_a(a)*f2_a(xr)<0){  // Corregido: f2_22 por f2
+                long double xr=a-f2_a(a)*(b-a)/(f2_a(b)-f2_a(a));  
+                if(f2_a(a)*f2_a(xr)<0){  
                     b=xr;
                 }
                 else{
                     a=xr;
                 }
-                if(fabs(f2_a(xr))<error){  // Corregido: f2_22 por f2
+                if(fabs(f2_a(xr))<error){  
                     cout<<"La raiz es: "<<xr<<endl;
                     return;
                 }

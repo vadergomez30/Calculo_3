@@ -1,6 +1,6 @@
 #include <iostream>
 #include <vector>
-#include <cmath>    // fabs, etc.
+#include <cmath>    
 #include <iomanip>  // setw, setprecision
 #include <cstdlib>  // system("pause")
 using namespace std;

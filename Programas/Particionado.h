@@ -2,7 +2,7 @@
 #include <vector>
 #include <iomanip>
 #include <cmath>
-#include <cstdlib>  // <-- para system("pause")
+#include <cstdlib>  
 using namespace std;
 
 vector<vector<double>> identidad(int n) {
@@ -146,7 +146,7 @@ void resultado(vector<vector<double>>D,vector<vector<double>>E,vector<vector<dou
     cout<<"\nMatriz inversa\n";
     for(int i = 0; i < n; i++) {
         for(int j = 0; j < n; j++) {
-            if (abs(res[i][j]) < 1e-10){  // Si es muy cercano a 0
+            if (abs(res[i][j]) < 1e-10){  
                 cout << 0 << "\t";
             }else{
                 cout << res[i][j] << " ";
@@ -182,11 +182,6 @@ void printMatrix(const vector<vector<double>>& M, const string& name = "") {
     }
     cout << '\n';
 }
-
-
-// OJO: aquí asumo que tienes definida determinant(const vector<vector<double>>&)
-//      en otro archivo y la linkeas con este.
-
 void Particionado() {
     cout << "Metodo de Particionado de Matrices\n";
     cout<<"\nIngrese el tamano de la matriz: ";

@@ -1,15 +1,9 @@
 #include <bits/stdc++.h>
-#include <cstdlib> // por si acaso, para system("pause")
+#include <cstdlib>
 using namespace std; 
 
 using Mat = vector<vector<double>>;
 static const double EPS = 1e-12;
-
-// OJO: aquí asumo que ya tienes definidas en otro archivo:
-// - double determinant(const Mat& A);
-// - Mat identidad2(int n);
-// y que se compilan/linkean juntas con este archivo.
-
 void printVec(const vector<double>& v, const string& title){
     cout << "\n" << title << ":\n";
     cout.setf(std::ios::fixed); 
@@ -104,8 +98,6 @@ Mat invGaussJordan(const Mat& A){
     }
     return Inv;
 }
-
-//partición A y b
 void partirA(const Mat& A, int p, Mat& A11, Mat& A12, Mat& A21, Mat& A22){
     int n=A.size();
     A11.assign(p,      vector<double>(p));
@@ -129,8 +121,6 @@ void partirb(const vector<double>& b, int p, vector<double>& b1, vector<double>&
     for(int i=0;i<p;i++)   b1[i]     = b[i];
     for(int i=p;i<n;i++)   b2[i-p]   = b[i];
 }
-
-// Gauss–Jordan particionado
 void GaussParticionado(){
     int n;
     cout << "Hola" << endl;
@@ -166,7 +156,6 @@ void GaussParticionado(){
     printMat(A, "Matriz A ingresada");
     printVec(b, "Vector b ingresado");
 
-    // Determinante de A
     double detA = determinant(A);
     cout.setf(std::ios::fixed); 
     cout << setprecision(10);
@@ -184,8 +173,6 @@ void GaussParticionado(){
         system("pause");
         return; 
     }
-
-    // Partir A y b
     Mat A11,A12,A21,A22;
     vector<double> b1,b2;
     partirA(A,p,A11,A12,A21,A22);
@@ -199,18 +186,16 @@ void GaussParticionado(){
     printVec(b2,  "b2");
 
     try{
-        // Paso 1:
         Mat A11_inv = invGaussJordan(A11);
-        Mat A12_p   = mult(A11_inv, A12);              // A12'
-        vector<double> b1_p = multMatVec(A11_inv, b1); // b1'
+        Mat A12_p   = mult(A11_inv, A12);             
+        vector<double> b1_p = multMatVec(A11_inv, b1); 
 
         printMat(A11_inv, "A11^{-1}");
         printMat(A12_p,   "A12' = A11^{-1} * A12");
         printVec(b1_p,    "b1'  = A11^{-1} * b1");
 
-        // Paso 2:
         Mat A21A12p = mult(A21, A12_p);
-        Mat A22_p   = resta(A22, A21A12p);                   // A22'
+        Mat A22_p   = resta(A22, A21A12p);                  
         vector<double> A21b1p = multMatVec(A21, b1_p);
         vector<double> b2_p(b2.size(),0.0);
         for(size_t i=0;i<b2.size();i++) 
@@ -218,22 +203,20 @@ void GaussParticionado(){
 
         printMat(A22_p, "A22' = A22 - A21 * A12'");
         printVec(b2_p,  "b2'  = b2 - A21 * b1'");
-
-        // (Comprobacion det por bloques)
         double detA11  = determinant(A11);
         double detA22p = determinant(A22_p);
         cout << "\nDet(A11): " << detA11 
              << "   Det(A22'): " << detA22p
              << "   Chequeo det(A) ~ det(A11)*det(A22') = " << detA11*detA22p << "\n";
 
-        // Paso 3:
+       
         Mat A22_p_inv = invGaussJordan(A22_p);
         vector<double> b2_pp = multMatVec(A22_p_inv, b2_p);
 
         printMat(A22_p_inv, "(A22')^{-1}");
         printVec(b2_pp,     "b2'' = (A22')^{-1} * b2'");
 
-        // Paso 4:
+       
         vector<double> A12pb2pp = multMatVec(A12_p, b2_pp);
         vector<double> b1_pp(b1_p.size(),0.0);
         for(size_t i=0;i<b1_p.size();i++) 
@@ -241,14 +224,14 @@ void GaussParticionado(){
 
         printVec(b1_pp, "b1'' = b1' - A12' * b2''");
 
-        // Paso 5:
+       
         vector<double> x(n,0.0);
         for(int i=0;i<p;i++)   x[i]   = b1_pp[i];
         for(int i=p;i<n;i++)   x[i]   = b2_pp[i-p];
 
         printVec(x, "Solucion x (Gauss-Jordan particionado)");
 
-        // Comprobación A*x
+       
         vector<double> Ax = multMatVec(A, x);
         printVec(Ax, "A*x (debe aproximar b)");
 

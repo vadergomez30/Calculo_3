@@ -1,9 +1,7 @@
 #include <bits/stdc++.h>
-#include <cstdlib>   // <-- necesario para system("pause")
+#include <cstdlib>   
 using namespace std; 
 using Mat = vector<vector<double>>;
-
-// Se asume que EXISTE determinant(A) en otro archivo que compilas junto con este.
 
 bool supuestos(const Mat& A){
     int n=A.size();
@@ -14,9 +12,9 @@ bool supuestos(const Mat& A){
             if(j==i) continue;
             suma+=fabs(A[i][j]);
         }
-        if(diag < suma) return false;  // falla dominancia diagonal
+        if(diag < suma) return false;  
     }
-    return (determinant(A)==0)? false: true;  // debe ser no singular
+    return (determinant(A)==0)? false: true;  
 }
 
 bool detener(const vector<double> &x_ant, const vector<double> &x_nue, const double &error){
@@ -79,12 +77,10 @@ void Jacobi(){
     for(int i=0;i<n;i++){
         cin>>b[i];
     }
-
-    // Verificar supuestos antes de iterar
     if(!supuestos(A)){
         cout<<"La matriz no cumple los supuestos necesarios "
               "(dominancia diagonal y no singularidad).\n";
-        system("pause");      // <-- PAUSA POR SI HAY ERROR
+        system("pause");     
         return;
     }
 
@@ -92,7 +88,5 @@ void Jacobi(){
     vector<double> x_nue(n,0.0);
 
     iterativoJacobi(A, b, x_ant, x_nue, error, count);
-
-    // Pausa final para que la ventana no se cierre
     system("pause");
 }
