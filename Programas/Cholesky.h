@@ -193,7 +193,7 @@ bool croutTridiagonal(const vector<vector<double>>& A,
         }
         imprimirMatriz(L, "Matriz L (Crout - parcial)");
 
-        U[0][1] = A[0][1] / L[0][0];   // u12 = a12 / l11
+        U[0][1] = A[0][1] / L[0][0];   
         imprimirMatriz(U, "Matriz U (Crout - parcial)");
         for (int i = 1; i <= n-2; ++i) {
             L[i][i-1] = A[i][i-1];
@@ -235,7 +235,7 @@ bool croutTridiagonal(const vector<vector<double>>& A,
         double suma = 0.0;
         for (int j = i+1; j < n; ++j)
             suma += U[i][j] * xCrout[j];
-        xCrout[i] = (c[i] - suma) / U[i][i]; // U[i][i] = 1
+        xCrout[i] = (c[i] - suma) / U[i][i]; 
     }
 
     return true;
