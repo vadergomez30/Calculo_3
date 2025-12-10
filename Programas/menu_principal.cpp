@@ -11,6 +11,14 @@ using namespace std;
 
 int main() {
     int opc;
+    cout<<"Equipo insanos de metodos numericos\n";
+    cout<<"Este es nuestro paquete con todos los metodos vistos en clase de metodos numericos, con la profesora Anabel Moreno Baltazar"<<endl;
+    cout<<"Integrantes:"<<endl;
+    cout<<"Almaraz Remigio Luis"<<endl;
+    cout<<"Fajardo de la O Gerardo"<<endl;
+    cout<<"Gomez Perez Vader Ali"<<endl;
+    cout<<"Ramos Renteria Emiliano"<<endl;
+    system("pause");
 
     do {
         cout << "\n===== MENU PRINCIPAL =====\n";
