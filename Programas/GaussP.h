@@ -135,7 +135,7 @@ void GaussParticionado(){
     cout << "Ingrese la matriz A ("<<n<<"x"<<n<<"), por filas:\n";
     for(int i=0;i<n;i++){
         for(int j=0;j<n;j++){
-            if(!(cin>>A[i][j])){ 
+            if(!(cout<<"A["<<i+1<<","<<j+1<<"] = ", cin>>A[i][j])){ 
                 cerr<<"Entrada invalida.\n"; 
                 system("pause");
                 return; 
@@ -146,7 +146,7 @@ void GaussParticionado(){
     vector<double> b(n,0.0);
     cout << "Ingrese el vector b ("<<n<<" valores):\n";
     for(int i=0;i<n;i++){
-        if(!(cin>>b[i])){ 
+        if(!(cout<<"b["<<i+1<<"] = ", cin>>b[i])){ 
             cerr<<"Entrada invalida.\n"; 
             system("pause");
             return; 

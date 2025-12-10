@@ -217,6 +217,7 @@ void Particionado() {
     for(int i=0; i<n; i++){
         cout<< "\nFila "<<i+1<<": \n";
         for(int j=0; j<n; j++){
+            cout<<"A["<<i+1<<","<<j+1<<"] = ";
             cin>>mat[i][j];
         }
     }

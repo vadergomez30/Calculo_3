@@ -60,6 +60,7 @@ void GaussSeidel(){
     cout << "Ingrese la matriz A ("<<n<<"x"<<n<<"), por filas:\n";
     for(int i=0;i<n;i++){
         for(int j=0;j<n;j++){
+            cout<< "A["<<i+1<<","<<j+1<<"] = ";
             cin>>A[i][j];
         }
     }

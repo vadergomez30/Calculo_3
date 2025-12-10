@@ -193,7 +193,7 @@ bool croutTridiagonal(const vector<vector<double>>& A,
         }
         imprimirMatriz(L, "Matriz L (Crout - parcial)");
 
-        U[0][1] = A[0][1] / L[0][0];   
+        U[0][1] = A[0][1] / L[0][0];   // u12 = a12 / l11
         imprimirMatriz(U, "Matriz U (Crout - parcial)");
         for (int i = 1; i <= n-2; ++i) {
             L[i][i-1] = A[i][i-1];
@@ -235,7 +235,7 @@ bool croutTridiagonal(const vector<vector<double>>& A,
         double suma = 0.0;
         for (int j = i+1; j < n; ++j)
             suma += U[i][j] * xCrout[j];
-        xCrout[i] = (c[i] - suma) / U[i][i]; 
+        xCrout[i] = (c[i] - suma) / U[i][i]; // U[i][i] = 1
     }
 
     return true;
@@ -246,6 +246,7 @@ void menuLU() {
     cout << "1) Cholesky\n";
     cout << "2) Doolittle\n";
     cout << "3) Crout\n";
+    cout<<"4) Volver al menu principal\n";
     cout << "Elige una opcion: ";
     int opcion;
     cin >> opcion;
@@ -282,7 +283,7 @@ void menuLU() {
             break;
         }
         case 2: {
-            cout << "\n=== Metodo de Doolittle (recursivo) ===\n";
+            cout << "\n=== Metodo de Doolittle===\n";
             int n;
             cout << "Introduce el numero de variables (dimension n): ";
             cin >> n;
@@ -312,7 +313,7 @@ void menuLU() {
             break;
         }
         case 3: {
-            cout << "\n=== Metodo de Crout (tridiagonal) ===\n";
+            cout << "\n=== Metodo de Crout===\n";
             int n;
             cout << "Introduce el numero de variables (dimension n): ";
             cin >> n;
@@ -341,6 +342,8 @@ void menuLU() {
             system("pause");
             break;
         }
+        case 4:
+            return;
         default:
             cout << "Opcion no valida.\n";
             system("pause");
