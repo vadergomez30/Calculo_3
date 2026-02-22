@@ -338,9 +338,11 @@ void ejecutarFalsaPosicion() {
                 long double xr=a-f2_a(a)*(b-a)/(f2_a(b)-f2_a(a));  
                 if(f2_a(a)*f2_a(xr)<0){  
                     b=xr;
+                    cout<<b<<endl;
                 }
                 else{
                     a=xr;
+                    cout<<a<<endl;
                 }
                 if(fabs(f2_a(xr))<error){  
                     cout<<"La raiz es: "<<xr<<endl;
