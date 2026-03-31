@@ -19,6 +19,11 @@ db broyden4_funcion1(db x, db y, db z) { return x*x+y*y-2*z+3; }
 db broyden4_funcion2(db x, db y, db z) { return x+y+z-5; }
 db broyden4_funcion3(db x, db y, db z) { return x*x-y*y+z*z-9; }    
 
+db broydenIA_funcion1(db x, db y, db z, db w) { return x + y + z + w -100; }
+db broydenIA_funcion2(db x, db y, db z, db w) { return x*y-400; }
+db broydenIA_funcion3(db x, db y, db z, db w) { return z*z+w-90; }
+db broydenIA_funcion4(db x, db y, db z, db w) { return y+sqrt(w)-30; }
+
 Mat inversa(const Mat& A) {
     int n = A.size();
     Mat M = A; 
@@ -107,6 +112,10 @@ void broyden(Mat x1, Mat F1, Mat J_inv, double error, Mat x0, Mat F0, int opc, i
         double normF = max({fabs(F1[0][0]), fabs(F1[1][0]), fabs(F1[2][0])});
         if(normF < error) break;
         }   
+        else if(n == 4){
+        double normF = max({fabs(F1[0][0]), fabs(F1[1][0]), fabs(F1[2][0]), fabs(F1[3][0])});
+        if(normF < error) break;
+        }
         Mat dx = resta(x1, x0);
         Mat dF = resta(F1, F0);
 
@@ -152,7 +161,16 @@ void broyden(Mat x1, Mat F1, Mat J_inv, double error, Mat x0, Mat F0, int opc, i
             F1[1][0] = broyden4_funcion2(x1[0][0], x1[1][0], x1[2][0]);
             F1[2][0] = broyden4_funcion3(x1[0][0], x1[1][0], x1[2][0]);
             break;
+        
+
+        case 5:
+            F1[0][0] = broydenIA_funcion1(x1[0][0], x1[1][0], x1[2][0], x1[3][0]);
+            F1[1][0] = broydenIA_funcion2(x1[0][0], x1[1][0], x1[2][0], x1[3][0]);
+            F1[2][0] = broydenIA_funcion3(x1[0][0], x1[1][0], x1[2][0], x1[3][0]);
+            F1[3][0] = broydenIA_funcion4(x1[0][0], x1[1][0], x1[2][0], x1[3][0]);
+            break;
         }
+    
         
         iter++;
         if(n == 2)
@@ -162,6 +180,11 @@ void broyden(Mat x1, Mat F1, Mat J_inv, double error, Mat x0, Mat F0, int opc, i
         cout << " x" << iter << " = " << x1[0][0] 
              << ", y" << iter << " = " << x1[1][0] 
              << ", z" << iter << " = " << x1[2][0] << "\n";
+        else if(n == 4)
+        cout << " x" << iter << " = " << x1[0][0] 
+             << ", y" << iter << " = " << x1[1][0] 
+             << ", z" << iter << " = " << x1[2][0] 
+             << ", w" << iter << " = " << x1[3][0] << "\n";
     }
 
     if(n == 2){
@@ -169,6 +192,9 @@ void broyden(Mat x1, Mat F1, Mat J_inv, double error, Mat x0, Mat F0, int opc, i
     }
     else if(n == 3){
         cout << "Solucion encontrada: x = " << x1[0][0] << ", y = " << x1[1][0] << ", z = " << x1[2][0] << "\n";
+    }
+    else if(n == 4){
+        cout << "Solucion encontrada: x = " << x1[0][0] << ", y = " << x1[1][0] << ", z = " << x1[2][0] << ", w = " << x1[3][0] << "\n";
     }
     cout << "Numero de iteraciones: " << iter << endl;
 }
@@ -178,6 +204,7 @@ void Newton(int opc){
     int n;
     if(opc == 1 || opc == 2) n = 2;
     else if(opc == 3 || opc == 4) n = 3;
+    else if(opc == 5) n = 4;
     int max_iter;
 
     Mat J(n, vector<db>(n));
@@ -301,6 +328,51 @@ void Newton(int opc){
 
         break;
 
+
+
+        case 5:
+        cout << "f1(x,y,z,w)=x+y+z+w-100\nf2(x,y,z,w)=xy-400\nf3(x,y,z,w)=z^2+w-90\nf4(x,y,z,w)=y+sqrt(w)-30\n";
+        cout << "Ingrese x0: ";  cin >> x0[0][0];
+        cout << "Ingrese y0: ";  cin >> x0[1][0];
+        cout << "Ingrese z0: ";  cin >> x0[2][0];
+        cout << "Ingrese w0: ";  cin >> x0[3][0];
+        cout << "Ingrese tolerancia: "; cin >> error;
+        cout << "Ingerese numero maximo de iteraciones: "; cin >> max_iter;
+        n = 4;
+        J[0][0] = 1;
+        J[0][1] = 1;
+        J[0][2] = 1;
+        J[0][3] = 1;
+        J[1][0] = x0[1][0];
+        J[1][1] = x0[0][0];
+        J[1][2] = 0;
+        J[1][3] = 0;
+        J[2][0] = 0;
+        J[2][1] = 0;
+        J[2][2] = 2*x0[2][0];
+        J[2][3] = 1;
+        J[3][0] = 0;
+        J[3][1] = 1;
+        J[3][2] = 0;
+        J[3][3] = (double)1/(2*sqrt(x0[3][0]));
+
+        J_inv = inversa(J);
+        if(J_inv.empty()){
+            cout << "Jacobiano singular inicial.\n";
+            return;
+        }
+        F0[0][0] = broydenIA_funcion1(x0[0][0], x0[1][0], x0[2][0], x0[3][0]);
+        F0[1][0] = broydenIA_funcion2(x0[0][0], x0[1][0], x0[2][0], x0[3][0]);
+        F0[2][0] = broydenIA_funcion3(x0[0][0], x0[1][0], x0[2][0], x0[3][0]);
+        F0[3][0] = broydenIA_funcion4(x0[0][0], x0[1][0], x0[2][0], x0[3][0]);
+        x1 = resta(x0, mult(J_inv, F0));
+        F1[0][0] = broydenIA_funcion1(x1[0][0], x1[1][0], x1[2][0], x1[3][0]);
+        F1[1][0] = broydenIA_funcion2(x1[0][0], x1[1][0], x1[2][0], x1[3][0]);
+        F1[2][0] = broydenIA_funcion3(x1[0][0], x1[1][0], x1[2][0], x1[3][0]);
+        F1[3][0] = broydenIA_funcion4(x1[0][0], x1[1][0], x1[2][0], x1[3][0]);
+        break;
+
+
     }
     
 
@@ -308,6 +380,8 @@ void Newton(int opc){
         cout << " x1 = " << x1[0][0] << ", y1 = " << x1[1][0] << "\n";
     else if(n == 3)
         cout << " x1 = " << x1[0][0] << ", y1 = " << x1[1][0] << ", z1 = " << x1[2][0] << "\n";
+    else if(n == 4)
+        cout << " x1 = " << x1[0][0] << ", y1 = " << x1[1][0] << ", z1 = " << x1[2][0] << ", w1 = " << x1[3][0] << "\n";
 
     broyden(x1, F1, J_inv, error, x0, F0, opc, max_iter);
     cout<<"Desea probar otros datos iniciales? (s/n): ";
@@ -318,21 +392,21 @@ void Newton(int opc){
 }
 
 
-int main(){
+void broyden(){
     while(true){
         cout<<"\n\nMetodo de Broyden para sistemas no lineales\n\n";
-        cout<<"Desarrollado por: \nGomez Perez Vader Ali\nRamos Renteria Emiliano\nAlmaraz Remigio Luis\n\n";
         cout<<"Seleccione el sistema de ecuaciones a resolver:\n\n";    
         cout<<"1.f1(x,y)=x^2+xy+2y^2-5\n  f2(x,y)=5y-2xy^2+3\n\n";
         cout<<"2.f1(x,y)=x^2-3y^2-10\n  f2(x,y)=2y^2-3xy+1\n\n";
         cout<<"3.f1(x,y,z)=3x^2+y^2-8y+2z^2-5\n  f2(x,y,z)=-2x^2-12x+y^2-3z^2+10\n  f3(x,y,z)=-x+2y+5z\n\n";
         cout<<"4.f1(x,y,z)=x^2+y^2-2z+3\n  f2(x,y,z)=x+y+z-5\n  f3(x,y,z)=x^2-y^2+z^2-9\n\n";
-        cout<<"5.Salir\n\nOpcion: ";
+        cout<<"5.f1(x,y,z,w)=x+y+z+w-100\n  f2(x,y,z,w)=xy-400\n  f3(x,y,z,w)=z^2+w-90\n  f4(x,y,z,w)=y+sqrt(w)-30\n\n";
+        cout<<"6.Salir\n\nOpcion: ";
         int opc; 
         cin>>opc;
-        if(opc < 1 || opc > 4){
+        if(opc < 1 || opc > 5){
             cout << "Saliendo.\n";
-            return 0;
+            return ;
         }
         Newton(opc);
         cout<<"Desea resolver otro sistema? (s/n): ";
@@ -343,5 +417,5 @@ int main(){
         }
     }   
 
-    return 0;
+    return ;
 }
