@@ -1,3 +1,5 @@
+//g++ -std=c++20 Proyecto_Final.cpp -o Proyecto_Final.exe
+
 #include <bits/stdc++.h>
 using namespace std;
 #define ll long long 
