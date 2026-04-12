@@ -1,0 +1,177 @@
+#include <bits/stdc++.h>
+using namespace std;
+#define ll long long 
+using Mat = vector<vector<ll>>;
+static const double EPS = 1e-12;
+
+Mat multiplicar(const Mat& A, const Mat& B, int mod) {
+    int n = A.size();
+    Mat C(n, vector<ll>(n, 0));
+    for (int i = 0; i < n; i++)
+        for (int k = 0; k < n; k++)
+            for (int j = 0; j < n; j++)
+                C[i][j] = (C[i][j] + A[i][k] * B[k][j]) % mod;
+    return C;
+}
+
+Mat suma(const Mat& A, const Mat& B){
+    int n = A.size(), m = A[0].size();
+    Mat C(n, vector<ll>(m,0.0));
+    for(int i=0;i<n;i++)
+        for(int j=0;j<m;j++)
+            C[i][j] = A[i][j] + B[i][j];
+    return C;
+}
+
+int main() {
+	int ver, lin, tipoGrafica;
+    unordered_set<char> vertices;
+    unordered_map<char,int> indice;
+    int mod = 1e9 + 7; 
+    char masmenos = 241;
+    cout<<"Ingresa la cantidad de vertices: "; cin>>ver; cout<<'\n';
+    cout<<"Ingresa la cantidad de lineas: "; cin>>lin; cout<<'\n';
+    cout<<"La Grafica es no dirigida(1) o dirigida(2)?: "; cin>>tipoGrafica; cout<<'\n';
+
+    Mat incidencia(ver, vector<ll>(lin,0));
+    Mat adyacencia(ver,vector<ll>(ver,0));
+    Mat accesibilidad(ver, vector<ll>(ver,0));
+    switch(tipoGrafica){
+        
+        case 1:
+
+            cout<<"Ingrese la relacion de cada linea (ambos vertices separados por un espacio) :"<<'\n';        
+            for(int i=0; i<lin; i++){
+                char aux1, aux2;
+                cout<<"Linea "<<i+1<<" :"<<'\n';
+                cin>>aux1>>aux2;
+                if(!vertices.contains(aux1)){
+                    if(vertices.size()<ver){
+                        indice[aux1] = vertices.size();
+                        vertices.insert(aux1);
+                    }
+                    else {
+                        cout<<"Numero de vertices excedido("<<ver<<")"<<'\n';
+                        return 0;
+                    }
+                }
+            if(!vertices.contains(aux2)){
+                    if(vertices.size()<ver){
+                        indice[aux2] = vertices.size();
+                        vertices.insert(aux2);
+                    }
+                    else {
+                        cout<<"Numero de vertices excedido("<<ver<<")"<<'\n';
+                        return 0;
+                    }
+                }
+                incidencia[indice[aux1]][i] = 1;
+                incidencia[indice[aux2]][i] = 1;
+                adyacencia[indice[aux1]][indice[aux2]]=1;
+                adyacencia[indice[aux2]][indice[aux1]]=1;
+
+            }
+            char aux;
+            aux = 'A'; 
+
+            while (vertices.size() != ver) {
+                if (!vertices.contains(aux)) {
+                    indice[aux] = vertices.size();
+                    vertices.insert(aux);
+                }
+                aux++;
+            }
+            
+
+        break;
+
+        case 2:
+            cout<<"Ingrese la relacion de cada linea (ambos vertices separados por un espacio) :"<<'\n';
+            cout<<"*Primero el vertice del que sale la linea y depues en el que incide*"<<'\n';
+            for(int i=0; i<lin; i++){
+                char aux1, aux2;
+                cout<<"Linea "<<i+1<<" :"<<'\n';
+                cin>>aux1>>aux2;
+                if(!vertices.contains(aux1)){
+                    if(vertices.size()<ver){
+                        indice[aux1] = vertices.size();
+                        vertices.insert(aux1);
+                    }
+                    else {
+                        cout<<"Numero de vertices excedido("<<ver<<")"<<'\n';
+                        return 0;
+                    }
+                }
+            if(!vertices.contains(aux2)){
+                    if(vertices.size()<ver){
+                        indice[aux2] = vertices.size();
+                        vertices.insert(aux2);
+                    }
+                    else {
+                        cout<<"Numero de vertices excedido("<<ver<<")"<<'\n';
+                        return 0;
+                    }
+                }
+                if(aux1==aux2)incidencia[indice[aux1]][i] = 2;
+                else {
+                    incidencia[indice[aux1]][i] = 1;
+                    incidencia[indice[aux2]][i] = -1;
+                }
+                adyacencia[indice[aux1]][indice[aux2]] = 1;
+            }
+
+            break;
+
+
+        default:
+
+            cout<< "Opcion no valida";
+            return 0;
+    }
+    long long exp = (ver * ver + ver)/2;
+    for(int i=0; i<exp; i++){
+        accesibilidad = adyacencia;
+        accesibilidad = suma(accesibilidad,multiplicar(accesibilidad, adyacencia, mod));
+    }
+
+    vector<char> v(vertices.begin(), vertices.end());
+    reverse(v.begin(),v.end());
+    cout<<"Las matrices correspondientes son las siguientes :"<<'\n';
+    cout<<"Mat incidencia"<<'\n'<<"* ";
+    if(lin==0)cout<<"No hay lineas por lo que no hay matriz de adyacencia";
+    for(int i=0; i<lin; i++)cout<<i+1<<" ";
+    cout<<'\n';
+    for(int i=0; i<ver; i++){
+        for(int j=0; j<lin; j++){
+            if(j==0)cout<<v[i]<<" ";
+            if(incidencia[i][j]==2)cout<<masmenos<<" ";
+            else cout<<incidencia[i][j]<<" ";
+        }
+        cout <<'\n'; 
+    }
+
+    cout<<"Mat adyacencia"<<'\n'<<"* ";
+    for(int i=0; i<ver; i++)cout<<v[i]<<" ";
+    cout<<'\n';
+    for(int i=0; i<ver; i++){
+        for(int j=0; j<ver; j++){
+            if(j==0)cout<<v[i]<<" ";
+            cout<<adyacencia[i][j]<<" ";
+        }
+        cout <<'\n'; 
+    }
+
+    cout<<"Mat accesibilidad"<<'\n'<<"* ";
+    for(int i=0; i<ver; i++)cout<<v[i]<<" ";
+    cout<<'\n';
+    for(int i=0; i<ver; i++){
+        for(int j=0; j<ver; j++){
+            if(j==0)cout<<v[i]<<" ";
+            if(accesibilidad[i][j] != 0) cout<<"+"<<" ";
+            else cout<<accesibilidad[i][j]<<" ";
+        }
+        cout <<'\n'; 
+    }
+ 
+    return 0;
+}
