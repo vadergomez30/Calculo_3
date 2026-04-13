@@ -33,6 +33,7 @@ int main() {
     char masmenos = 241;
     char aux;
     aux = 'A';
+    bool simple=true, conectada=true, regular=true;
     cout<<"Ingresa la cantidad de vertices: "; cin>>ver; cout<<'\n';
     cout<<"Ingresa la cantidad de lineas: "; cin>>lin; cout<<'\n';
     cout<<"La Grafica es no dirigida(1) o dirigida(2)?: "; cin>>tipoGrafica; cout<<'\n';
@@ -84,6 +85,7 @@ int main() {
                 }
                 aux++;
             }
+            cout<<'\n';
             
 
         break;
@@ -129,7 +131,7 @@ int main() {
                 }
                 aux++;
             }
-            
+            cout<<'\n';
             
             break;
 
@@ -147,7 +149,7 @@ int main() {
 
     vector<char> v(vertices.begin(), vertices.end());
     reverse(v.begin(),v.end());
-    cout<<"Las matrices correspondientes son las siguientes :"<<'\n';
+    cout<<"Las matrices correspondientes son las siguientes :\n"<<'\n';
     cout<<"Mat incidencia"<<'\n'<<"* ";
     if(lin==0)cout<<"No hay lineas por lo que no hay matriz de adyacencia";
     for(int i=0; i<lin; i++)cout<<i+1<<" ";
@@ -171,6 +173,7 @@ int main() {
         }
         cout <<'\n'; 
     }
+    cout<<'\n';
 
     cout<<"Mat adyacencia"<<'\n'<<"* ";
     for(int i=0; i<ver; i++)cout<<v[i]<<" ";
@@ -182,6 +185,7 @@ int main() {
         }
         cout <<'\n'; 
     }
+    cout<<'\n';
 
     cout<<"Mat accesibilidad"<<'\n'<<"* ";
     for(int i=0; i<ver; i++)cout<<v[i]<<" ";
@@ -194,6 +198,7 @@ int main() {
         }
         cout <<'\n'; 
     }
+    cout<<'\n';
 
     cout<<"Informacion de los vertices: "<<'\n';
     if(tipoGrafica==1){ 
@@ -201,6 +206,8 @@ int main() {
         for(int i=0; i<ver; i++){
             cout<<v[i]<<": "<<grados1[i]<<'\n';
         }
+        cout<<'\n';
+        
         cout<<"Caracteristicas: \n";
         for(int i=0; i<ver; i++){
             if(grados1[i]==0)cout<<v[i]<<" Es aislado\n";
@@ -239,6 +246,7 @@ int main() {
 
     for(const auto& [col, indices] : paralelas){
         if(indices.size() > 1){
+            simple=false;
             cout<<"Las lineas ";
             for(int ind : indices)
                 cout << ind+1 << " ";
@@ -249,7 +257,10 @@ int main() {
     if(tipoGrafica==2){
         for(int i=0; i<ver; i++){
             for(int j=0; j<lin; j++){
-                if(incidencia[i][j]==2)cout<<"La linea "<<j+1<<" es un bucle\n";
+                if(incidencia[i][j]==2){
+                    simple=false;
+                    cout<<"La linea "<<j+1<<" es un bucle\n";
+                }
             }
         }
     }
@@ -259,7 +270,10 @@ int main() {
             for(int i=0; i<ver; i++){
                 sum+=incidencia[i][j];
             }
-            if(sum==1)cout<<"La linea "<<j+1<<" es un bucle\n";
+            if(sum==1){
+                simple=false;
+                cout<<"La linea "<<j+1<<" es un bucle\n";
+            }
         }
     }
     if(tipoGrafica==1)
@@ -275,6 +289,7 @@ int main() {
                         for(int z=j+1; z<ver; z++){
                             if(incidencia[i][z]==1){
                                 cout<<"Las lineas "<<j+1<<" y "<<z+1<<" son en serie\n";
+                                z=ver;
                             }
                         }
                     }
@@ -282,6 +297,56 @@ int main() {
             }
         }
     }
- 
+    
+    cout<<"\nClasificacion de la Grafica: \n";
+    if(!simple)cout<<"La Grafica es General\n";
+    else cout<<"La Grafica es simple\n";
+    if(lin==0)cout<<"La Grafica es nula\n";
+    for(int i=0; i<ver; i++){
+        for(int j=0; j<ver; j++){
+            if(accesibilidad[i][j]==0){
+                conectada=false;
+                goto salir;
+            }
+        }
+    }
+    salir:
+    if(conectada)cout<<"La Grafica es conectada\n";
+    else cout<<"La Grafica es desconectada\n";
+
+    if(tipoGrafica==1){
+        for(int i=1; i<ver; i++){
+            if(grados1[i]!=grados1[i-1]){
+                regular=false;
+                goto salir1;
+            } 
+        }
+    }
+    else{
+        ll grad=grados2[0][0];
+        for(int i=0; i<ver; i++){
+            if(grad!=grados2[i][0] || grad!=grados2[i][1]){
+                regular=false;
+                goto salir1;
+            }   
+        }
+    }
+
+    salir1:
+    if(regular)cout<<"La Grafica es regular\n";
+    
+    if(tipoGrafica==1){
+        if(simple && lin==(ver*(ver-1)/2)){
+            cout<<"La Grafica es completa\n";
+        }
+    }
+    else{
+        if(simple && lin==(ver*(ver-1))){
+            cout<<"La Grafica es completa\n";
+        }
+    }
+
+
+
     return 0;
 }
