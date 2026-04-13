@@ -1,7 +1,7 @@
 //g++ -std=c++20 Proyecto_Final.cpp -o Proyecto_Final.exe
-
 #include <bits/stdc++.h>
 using namespace std;
+
 #define ll long long 
 using Mat = vector<vector<ll>>;
 static const double EPS = 1e-12;
@@ -34,7 +34,8 @@ int main() {
     cout<<"Ingresa la cantidad de vertices: "; cin>>ver; cout<<'\n';
     cout<<"Ingresa la cantidad de lineas: "; cin>>lin; cout<<'\n';
     cout<<"La Grafica es no dirigida(1) o dirigida(2)?: "; cin>>tipoGrafica; cout<<'\n';
-
+    Mat grados2 (ver,vector<ll>(2,0));
+    vector<ll> grados1 (ver,0);
     Mat incidencia(ver, vector<ll>(lin,0));
     Mat adyacencia(ver,vector<ll>(ver,0));
     Mat accesibilidad(ver, vector<ll>(ver,0));
@@ -121,7 +122,8 @@ int main() {
                 }
                 adyacencia[indice[aux1]][indice[aux2]] = 1;
             }
-
+            
+            
             break;
 
 
@@ -148,6 +150,17 @@ int main() {
             if(j==0)cout<<v[i]<<" ";
             if(incidencia[i][j]==2)cout<<masmenos<<" ";
             else cout<<incidencia[i][j]<<" ";
+            if(tipoGrafica==2){
+                if(incidencia[i][j]==2){
+                    grados2[i][0]+=1;
+                    grados2[i][1]+=1;
+                }
+                else{
+                    if(incidencia[i][j]==-1) grados2[i][0]+=1;
+                    else if(incidencia[i][j]==1)grados2[i][1]+=1;
+                }
+            }
+            else grados1[i]+= incidencia[i][j];
         }
         cout <<'\n'; 
     }
@@ -174,6 +187,24 @@ int main() {
         }
         cout <<'\n'; 
     }
+
+    cout<<"Informacion de los vertices: "<<'\n';
+    if(tipoGrafica==1){ 
+        for(int i=0; i<ver; i++){
+            cout<<"vertice "<<v[i]<<":\n";
+            cout<<"grado: "<<grados1[i]<<'\n';
+            if(grados1[i]==0)cout<<"Es aislado\n";
+            if(grados1[i]==1)cout<<"Es colgante\n";
+        }
+    }
+    else{
+        for(int i=0; i<ver; i++){
+            for(int j=0; j<2; j++){
+                cout<<grados2[i][j]<<" ";
+            }
+        }
+    }
+    cout<<'\n';
  
     return 0;
 }
