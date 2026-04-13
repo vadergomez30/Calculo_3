@@ -262,6 +262,26 @@ int main() {
             if(sum==1)cout<<"La linea "<<j+1<<" es un bucle\n";
         }
     }
+    if(tipoGrafica==1)
+    for(int i=0; i<ver; i++){
+        if(grados1[i]==2){
+            for(int j=0; j<lin; j++){
+                if(incidencia[i][j]==1){
+                    vector<ll> colum(ver);
+                    for(int h=0; h<ver; h++){
+                        colum[h]=incidencia[h][j];
+                    }
+                    if(paralelas[colum].size()==1){
+                        for(int z=j+1; z<ver; z++){
+                            if(incidencia[i][z]==1){
+                                cout<<"Las lineas "<<j+1<<" y "<<z+1<<" son en serie\n";
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
  
     return 0;
 }
