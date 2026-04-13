@@ -31,6 +31,8 @@ int main() {
     unordered_map<char,int> indice;
     int mod = 1e9 + 7; 
     char masmenos = 241;
+    char aux;
+    aux = 'A';
     cout<<"Ingresa la cantidad de vertices: "; cin>>ver; cout<<'\n';
     cout<<"Ingresa la cantidad de lineas: "; cin>>lin; cout<<'\n';
     cout<<"La Grafica es no dirigida(1) o dirigida(2)?: "; cin>>tipoGrafica; cout<<'\n';
@@ -73,9 +75,7 @@ int main() {
                 adyacencia[indice[aux1]][indice[aux2]]=1;
                 adyacencia[indice[aux2]][indice[aux1]]=1;
 
-            }
-            char aux;
-            aux = 'A'; 
+            } 
 
             while (vertices.size() != ver) {
                 if (!vertices.contains(aux)) {
@@ -121,6 +121,13 @@ int main() {
                     incidencia[indice[aux2]][i] = -1;
                 }
                 adyacencia[indice[aux1]][indice[aux2]] = 1;
+            }
+            while (vertices.size() != ver) {
+                if (!vertices.contains(aux)) {
+                    indice[aux] = vertices.size();
+                    vertices.insert(aux);
+                }
+                aux++;
             }
             
             
@@ -190,21 +197,37 @@ int main() {
 
     cout<<"Informacion de los vertices: "<<'\n';
     if(tipoGrafica==1){ 
+        cout<<"Grado: \n";
         for(int i=0; i<ver; i++){
-            cout<<"vertice "<<v[i]<<":\n";
-            cout<<"grado: "<<grados1[i]<<'\n';
-            if(grados1[i]==0)cout<<"Es aislado\n";
-            if(grados1[i]==1)cout<<"Es colgante\n";
+            cout<<v[i]<<": "<<grados1[i]<<'\n';
+        }
+        cout<<"Caracteristicas: \n";
+        for(int i=0; i<ver; i++){
+            if(grados1[i]==0)cout<<v[i]<<" Es aislado\n";
+            else if(grados1[i]==1)cout<<v[i]<<" Es colgante\n"; 
         }
     }
     else{
+        cout<<"Grado: \n";
+        cout<<"  Int Ext\n";
         for(int i=0; i<ver; i++){
+            cout<<v[i]<<": ";
             for(int j=0; j<2; j++){
-                cout<<grados2[i][j]<<" ";
+                cout<<grados2[i][j]<<"    ";
             }
+            cout<<'\n';
+        }
+        cout<<"Caracteristicas: \n";
+        for(int i=0; i<ver; i++){
+            if(grados2[i][0]==0 && grados2[i][1]==0)cout<<v[i]<<" Es aislado\n";
+            else if(grados2[i][1]==0)cout<<v[i]<<" Es final\n";
+            else if(grados2[i][0]==0)cout<<v[i]<<" Es inicial\n";
         }
     }
     cout<<'\n';
+
+    cout<<"Informacion de lineas: \n";
+    
  
     return 0;
 }
