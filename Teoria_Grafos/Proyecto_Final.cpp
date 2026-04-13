@@ -227,7 +227,41 @@ int main() {
     cout<<'\n';
 
     cout<<"Informacion de lineas: \n";
-    
+    map<vector<ll>, vector<int>> paralelas;
+
+    for(int j = 0; j < lin; j++){
+        vector<ll> columna(ver);
+        for(int i = 0; i < ver; i++){
+            columna[i] = incidencia[i][j];
+        }        
+        paralelas[columna].push_back(j);
+    }
+
+    for(const auto& [col, indices] : paralelas){
+        if(indices.size() > 1){
+            cout<<"Las lineas ";
+            for(int ind : indices)
+                cout << ind+1 << " ";
+            cout<<"son paralelas";
+            cout << '\n';
+        }
+    }    
+    if(tipoGrafica==2){
+        for(int i=0; i<ver; i++){
+            for(int j=0; j<lin; j++){
+                if(incidencia[i][j]==2)cout<<"La linea "<<j+1<<" es un bucle\n";
+            }
+        }
+    }
+    else{
+        for(int j=0; j<lin; j++){
+            int sum=0;
+            for(int i=0; i<ver; i++){
+                sum+=incidencia[i][j];
+            }
+            if(sum==1)cout<<"La linea "<<j+1<<" es un bucle\n";
+        }
+    }
  
     return 0;
 }
