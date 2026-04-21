@@ -26,14 +26,14 @@ Mat suma(const Mat& A, const Mat& B){
 }
 
 int main() {
-	int ver, lin, tipoGrafica;
+        int ver, lin, tipoGrafica;
     unordered_set<char> vertices;
     unordered_map<char,int> indice;
     int mod = 1e9 + 7; 
     char masmenos = 241;
     char aux;
     aux = 'A';
-    bool simple=true, conectada=true, regular=true;
+    bool simple=true, conectada=true, regular=true, simetrica=true, balanceada=true;
     cout<<"Ingresa la cantidad de vertices: "; cin>>ver; cout<<'\n';
     cout<<"Ingresa la cantidad de lineas: "; cin>>lin; cout<<'\n';
     cout<<"La Grafica es no dirigida(1) o dirigida(2)?: "; cin>>tipoGrafica; cout<<'\n';
@@ -43,7 +43,7 @@ int main() {
     Mat adyacencia(ver,vector<ll>(ver,0));
     Mat accesibilidad(ver, vector<ll>(ver,0));
     switch(tipoGrafica){
-        
+
         case 1:
 
             cout<<"Ingrese la relacion de cada linea (ambos vertices separados por un espacio) :"<<'\n';        
@@ -51,7 +51,7 @@ int main() {
                 char aux1, aux2;
                 cout<<"Linea "<<i+1<<" :"<<'\n';
                 cin>>aux1>>aux2;
-                if(!vertices.contains(aux1)){
+                if(vertices.find(aux1) == vertices.end()){
                     if(vertices.size()<ver){
                         indice[aux1] = vertices.size();
                         vertices.insert(aux1);
@@ -61,7 +61,7 @@ int main() {
                         return 0;
                     }
                 }
-            if(!vertices.contains(aux2)){
+            if(vertices.find(aux2) == vertices.end()){
                     if(vertices.size()<ver){
                         indice[aux2] = vertices.size();
                         vertices.insert(aux2);
@@ -79,14 +79,14 @@ int main() {
             } 
 
             while (vertices.size() != ver) {
-                if (!vertices.contains(aux)) {
+                if (vertices.find(aux) == vertices.end()) {
                     indice[aux] = vertices.size();
                     vertices.insert(aux);
                 }
                 aux++;
             }
             cout<<'\n';
-            
+
 
         break;
 
@@ -97,7 +97,7 @@ int main() {
                 char aux1, aux2;
                 cout<<"Linea "<<i+1<<" :"<<'\n';
                 cin>>aux1>>aux2;
-                if(!vertices.contains(aux1)){
+                if(vertices.find(aux1) == vertices.end()){
                     if(vertices.size()<ver){
                         indice[aux1] = vertices.size();
                         vertices.insert(aux1);
@@ -107,7 +107,7 @@ int main() {
                         return 0;
                     }
                 }
-            if(!vertices.contains(aux2)){
+            if(vertices.find(aux2) == vertices.end()){
                     if(vertices.size()<ver){
                         indice[aux2] = vertices.size();
                         vertices.insert(aux2);
@@ -125,14 +125,14 @@ int main() {
                 adyacencia[indice[aux1]][indice[aux2]] = 1;
             }
             while (vertices.size() != ver) {
-                if (!vertices.contains(aux)) {
+                if (vertices.find(aux) == vertices.end()) {
                     indice[aux] = vertices.size();
                     vertices.insert(aux);
                 }
                 aux++;
             }
             cout<<'\n';
-            
+
             break;
 
 
@@ -141,9 +141,9 @@ int main() {
             cout<< "Opcion no valida";
             return 0;
     }
-    long long exp = (ver * ver + ver)/2;
+    long long exp = ((ver * ver + ver)/2)+10;
+    accesibilidad = adyacencia;
     for(int i=0; i<exp; i++){
-        accesibilidad = adyacencia;
         accesibilidad = suma(accesibilidad,multiplicar(accesibilidad, adyacencia, mod));
     }
 
@@ -207,7 +207,7 @@ int main() {
             cout<<v[i]<<": "<<grados1[i]<<'\n';
         }
         cout<<'\n';
-        
+
         cout<<"Caracteristicas: \n";
         for(int i=0; i<ver; i++){
             if(grados1[i]==0)cout<<v[i]<<" Es aislado\n";
@@ -297,8 +297,9 @@ int main() {
             }
         }
     }
-    
+
     cout<<"\nClasificacion de la Grafica: \n";
+
     if(!simple)cout<<"La Grafica es General\n";
     else cout<<"La Grafica es simple\n";
     if(lin==0)cout<<"La Grafica es nula\n";
@@ -325,27 +326,47 @@ int main() {
     else{
         ll grad=grados2[0][0];
         for(int i=0; i<ver; i++){
-            if(grad!=grados2[i][0] || grad!=grados2[i][1]){
+            if(grados2[i][0]!=grados2[i][1]){
+                balanceada=false;
                 regular=false;
                 goto salir1;
+            }
+            if(grad!=grados2[i][0] || grad!=grados2[i][1]){
+                regular=false;
             }   
         }
     }
 
     salir1:
     if(regular)cout<<"La Grafica es regular\n";
-    
+
     if(tipoGrafica==1){
-        if(simple && lin==(ver*(ver-1)/2)){
+        if(ver>1 && simple && lin==(ver*(ver-1)/2)){
             cout<<"La Grafica es completa\n";
         }
     }
     else{
-        if(simple && lin==(ver*(ver-1))){
+        if(ver>1 && simple && lin==(ver*(ver-1))){
             cout<<"La Grafica es completa\n";
         }
     }
 
+    if(tipoGrafica==1 && ver>1 && conectada && lin==ver-1)cout<<"La Grafica es un Arbol\n";
+
+    if(tipoGrafica==2)
+    for(int i=0; i<ver; i++){
+        for(int j=0; j<ver; j++){
+            if(adyacencia[i][j]!=adyacencia[j][i]){
+                simetrica=false;
+                goto salir2;
+            }
+        }
+    }
+    
+    salir2: 
+    if(lin>0 && tipoGrafica==2 && simetrica)cout<<"La Grafica es simetrica\n";
+
+    if(tipoGrafica==2 && balanceada)cout<<"La Grafica es balanceda\n";
 
 
     return 0;
