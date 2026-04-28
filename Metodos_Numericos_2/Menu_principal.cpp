@@ -1,6 +1,7 @@
 #include <bits/stdc++.h>
 #include "Broyden.h"
 #include "Diferencias_Newton.h"
+#include "Spline_Cubico.h"
 using namespace std;
 
 int main() {
@@ -12,7 +13,8 @@ int main() {
     while(!salir) {
         cout << "1. Sistemas de ecuaciones no lineales (Broyden)" << endl;
         cout << "2. Interpolacion polinomial (Diferencias de Newton)" << endl;
-        cout << "3. Salir" << endl;
+        cout << "3. Spline Cubico" << endl;
+        cout << "4. Salir" << endl;
         cout << "Seleccione una opcion: ";
         int opcion; cin >> opcion;
         switch(opcion) {
@@ -26,6 +28,11 @@ int main() {
                 newton();
                 break;
             case 3:
+                cout << "Spline Cubico seleccionada." << endl;
+                splineCubico();
+                break;
+            case 4:
+
                 cout << "Saliendo." << endl;
                 salir = true;
 
