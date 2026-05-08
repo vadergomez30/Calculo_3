@@ -25,6 +25,36 @@ Mat suma(const Mat& A, const Mat& B){
     return C;
 }
 
+void generarDOT(const vector<char>& vertices,const vector<pair<char,char>>& aristas,int tipoGrafica){
+    ofstream archivo("grafo.dot");
+
+    if(tipoGrafica == 1)
+        archivo << "graph G {\n";
+    else
+        archivo << "digraph G {\n";
+
+    archivo << "    node [shape=circle];\n";
+
+    for(char v : vertices){
+        archivo << "    " << v << ";\n";
+    }
+
+    for(auto arista : aristas){
+
+        char a = arista.first;
+        char b = arista.second;
+
+        if(tipoGrafica == 1)
+            archivo << "    " << a << " -- " << b << ";\n";
+        else
+            archivo << "    " << a << " -> " << b << ";\n";
+    }
+
+    archivo << "}\n";
+
+    archivo.close();
+}
+
 int main() {
     int ver, lin, tipoGrafica;
     unordered_set<char> vertices;
@@ -45,6 +75,7 @@ int main() {
     cout<<"La Grafica es no dirigida(1) o dirigida(2)?: "; cin>>tipoGrafica; cout<<'\n';
     Mat grados2 (ver,vector<ll>(2,0));
     vector<ll> grados1 (ver,0);
+    vector<pair<char,char>> aristas;
     Mat incidencia(ver, vector<ll>(lin,0));
     Mat adyacencia(ver,vector<ll>(ver,0));
     Mat accesibilidad(ver, vector<ll>(ver,0));
@@ -83,7 +114,7 @@ int main() {
                 incidencia[indice[aux2]][i] = 1;
                 adyacencia[indice[aux1]][indice[aux2]]=1;
                 adyacencia[indice[aux2]][indice[aux1]]=1;
-
+                aristas.push_back({aux1, aux2});
             } 
 
             while (vertices.size() != verCount) {
@@ -134,6 +165,7 @@ int main() {
                     incidencia[indice[aux2]][i] = -1;
                 }
                 adyacencia[indice[aux1]][indice[aux2]] = 1;
+                aristas.push_back({aux1, aux2});
             }
             while (vertices.size() != verCount) {
                 if (!vertices.count(aux)) {
@@ -397,6 +429,12 @@ int main() {
         }
         if(gradigual==ver-2)cout<<"La Grafica es unicursal"<<'\n';
     }
+
+    generarDOT(v, aristas, tipoGrafica);
+
+    system("dot -Tpng grafo.dot -o grafo.png");
+
+    cout << "\nSe genero la imagen: grafo.png\n";
 
     return 0;
 }
