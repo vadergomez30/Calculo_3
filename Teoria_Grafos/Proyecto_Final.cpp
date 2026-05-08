@@ -329,10 +329,10 @@ int main() {
                         colum[h]=incidencia[h][j];
                     }
                     if(paralelas[colum].size()==1){
-                        for(int z=j+1; z<ver; z++){
+                        for(int z=j+1; z<lin; z++){
                             if(incidencia[i][z]==1){
                                 cout<<"Las lineas "<<j+1<<" y "<<z+1<<" son en serie\n";
-                                z=ver;
+                                z=lin;
                             }
                         }
                     }
