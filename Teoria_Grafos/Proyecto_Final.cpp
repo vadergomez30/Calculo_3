@@ -26,15 +26,21 @@ Mat suma(const Mat& A, const Mat& B){
 }
 
 int main() {
-        int ver, lin, tipoGrafica;
+    int ver, lin, tipoGrafica;
     unordered_set<char> vertices;
     unordered_map<char,int> indice;
+    vector<char> v;
     int mod = 1e9 + 7; 
     char masmenos = 241;
     char aux;
     aux = 'A';
     bool simple=true, conectada=true, regular=true, simetrica=true, balanceada=true;
     cout<<"Ingresa la cantidad de vertices: "; cin>>ver; cout<<'\n';
+    if(ver <= 0){
+        cout<<"Numero de vertices debe ser mayor que 0"<<'\n';
+        return 0;
+    }
+    size_t verCount = static_cast<size_t>(ver);
     cout<<"Ingresa la cantidad de lineas: "; cin>>lin; cout<<'\n';
     cout<<"La Grafica es no dirigida(1) o dirigida(2)?: "; cin>>tipoGrafica; cout<<'\n';
     Mat grados2 (ver,vector<ll>(2,0));
@@ -51,20 +57,22 @@ int main() {
                 char aux1, aux2;
                 cout<<"Linea "<<i+1<<" :"<<'\n';
                 cin>>aux1>>aux2;
-                if(vertices.find(aux1) == vertices.end()){
-                    if(vertices.size()<ver){
+                if(!vertices.count(aux1)){
+                    if(vertices.size()<verCount){
                         indice[aux1] = vertices.size();
                         vertices.insert(aux1);
+                        v.push_back(aux1);
                     }
                     else {
                         cout<<"Numero de vertices excedido("<<ver<<")"<<'\n';
                         return 0;
                     }
                 }
-            if(vertices.find(aux2) == vertices.end()){
-                    if(vertices.size()<ver){
+            if(!vertices.count(aux2)){
+                    if(vertices.size()<verCount){
                         indice[aux2] = vertices.size();
                         vertices.insert(aux2);
+                        v.push_back(aux2);
                     }
                     else {
                         cout<<"Numero de vertices excedido("<<ver<<")"<<'\n';
@@ -78,10 +86,11 @@ int main() {
 
             } 
 
-            while (vertices.size() != ver) {
-                if (vertices.find(aux) == vertices.end()) {
+            while (vertices.size() != verCount) {
+                if (!vertices.count(aux)) {
                     indice[aux] = vertices.size();
                     vertices.insert(aux);
+                    v.push_back(aux);
                 }
                 aux++;
             }
@@ -97,20 +106,22 @@ int main() {
                 char aux1, aux2;
                 cout<<"Linea "<<i+1<<" :"<<'\n';
                 cin>>aux1>>aux2;
-                if(vertices.find(aux1) == vertices.end()){
-                    if(vertices.size()<ver){
+                if(!vertices.count(aux1)){
+                    if(vertices.size()<verCount){
                         indice[aux1] = vertices.size();
                         vertices.insert(aux1);
+                        v.push_back(aux1);
                     }
                     else {
                         cout<<"Numero de vertices excedido("<<ver<<")"<<'\n';
                         return 0;
                     }
                 }
-            if(vertices.find(aux2) == vertices.end()){
-                    if(vertices.size()<ver){
+            if(!vertices.count(aux2)){
+                    if(vertices.size()<verCount){
                         indice[aux2] = vertices.size();
                         vertices.insert(aux2);
+                        v.push_back(aux2);
                     }
                     else {
                         cout<<"Numero de vertices excedido("<<ver<<")"<<'\n';
@@ -124,10 +135,11 @@ int main() {
                 }
                 adyacencia[indice[aux1]][indice[aux2]] = 1;
             }
-            while (vertices.size() != ver) {
-                if (vertices.find(aux) == vertices.end()) {
+            while (vertices.size() != verCount) {
+                if (!vertices.count(aux)) {
                     indice[aux] = vertices.size();
                     vertices.insert(aux);
+                    v.push_back(aux);
                 }
                 aux++;
             }
@@ -147,8 +159,7 @@ int main() {
         accesibilidad = suma(accesibilidad,multiplicar(accesibilidad, adyacencia, mod));
     }
 
-    vector<char> v(vertices.begin(), vertices.end());
-    reverse(v.begin(),v.end());
+    cout<<'\n';
     cout<<"Las matrices correspondientes son las siguientes :\n"<<'\n';
     cout<<"Mat incidencia"<<'\n'<<"* ";
     if(lin==0)cout<<"No hay lineas por lo que no hay matriz de adyacencia";
@@ -368,6 +379,24 @@ int main() {
 
     if(tipoGrafica==2 && balanceada)cout<<"La Grafica es balanceda\n";
 
+    if(tipoGrafica==1 && conectada){
+        int gradpar=0;
+        for(int i=0; i<ver; i++){
+            if(grados1[i]%2!=0){
+                gradpar++;
+            }
+        }
+        if(gradpar==ver)cout<<"La Grafica es euleriana"<<'\n';
+        else if(gradpar==ver-2)cout<<"La Grafica es unicursal"<<'\n';
+    }
+    if(tipoGrafica==2 && balanceada)cout<<"La Grafica es euleriana"<<'\n';
+    else{
+        int gradigual=0;
+        for(int i=0; i<ver; i++){
+            if(grados2[i][0]==grados2[i][1])gradigual++;
+        }
+        if(gradigual==ver-2)cout<<"La Grafica es unicursal"<<'\n';
+    }
 
     return 0;
 }
