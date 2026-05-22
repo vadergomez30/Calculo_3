@@ -414,7 +414,7 @@ int main() {
     if(tipoGrafica==1 && conectada){
         int gradpar=0;
         for(int i=0; i<ver; i++){
-            if(grados1[i]%2!=0){
+            if(grados1[i]%2==0){
                 gradpar++;
             }
         }
