@@ -86,7 +86,7 @@ int main() {
             cout<<'\n';
         }
         tipoGrafica = stoi(inputTipo);
-
+        {
             Mat grados2(ver, vector<ll>(2,0));
             vector<ll> grados1(ver, 0);
             vector<pair<char,char>> aristas;
@@ -102,7 +102,7 @@ int main() {
                         cout<<"Linea "<<i+1<<" :"<<'\n';
                         cin>>aux1>>aux2;
                         if(!vertices.count(aux1)){
-                            if(vertices.size()<verCount){
+                            if(vertices.size()<ver){
                                 indice[aux1] = vertices.size();
                                 vertices.insert(aux1);
                                 v.push_back(aux1);
@@ -113,7 +113,7 @@ int main() {
                             }
                         }
                         if(!vertices.count(aux2)){
-                            if(vertices.size()<verCount){
+                            if(vertices.size()<ver){
                                 indice[aux2] = vertices.size();
                                 vertices.insert(aux2);
                                 v.push_back(aux2);
@@ -129,7 +129,7 @@ int main() {
                         adyacencia[indice[aux2]][indice[aux1]] = 1;
                         aristas.push_back({aux1, aux2});
                     } 
-                    while(vertices.size() != verCount){
+                    while(vertices.size() != ver){
                         if(!vertices.count(aux)){
                             indice[aux] = vertices.size();
                             vertices.insert(aux);
@@ -148,7 +148,7 @@ int main() {
                         cout<<"Linea "<<i+1<<" :"<<'\n';
                         cin>>aux1>>aux2;
                         if(!vertices.count(aux1)){
-                            if(vertices.size()<verCount){
+                            if(vertices.size()<ver){
                                 indice[aux1] = vertices.size();
                                 vertices.insert(aux1);
                                 v.push_back(aux1);
@@ -159,7 +159,7 @@ int main() {
                             }
                         }
                         if(!vertices.count(aux2)){
-                            if(vertices.size()<verCount){
+                            if(vertices.size()<ver){
                                 indice[aux2] = vertices.size();
                                 vertices.insert(aux2);
                                 v.push_back(aux2);
@@ -177,7 +177,7 @@ int main() {
                         adyacencia[indice[aux1]][indice[aux2]] = 1;
                         aristas.push_back({aux1, aux2});
                     }
-                    while(vertices.size() != verCount){
+                    while(vertices.size() != ver){
                         if(!vertices.count(aux)){
                             indice[aux] = vertices.size();
                             vertices.insert(aux);
