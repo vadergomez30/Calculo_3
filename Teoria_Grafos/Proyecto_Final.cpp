@@ -60,17 +60,32 @@ int main() {
         char aux = 'A';
         bool simple=true, conectada=true, regular=true, simetrica=true, balanceada=true;
 
-        cout<<"Ingresa la cantidad de vertices: "; cin>>ver; cout<<'\n';
-        if(ver <= 0){
-            cout<<"Numero de vertices debe ser mayor que 0"<<'\n';
-            system("pause");
-            goto preguntar;
+        string inputVer;
+        cout<<"Ingresa la cantidad de vertices: "; cin>>inputVer; cout<<'\n';
+        while(!all_of(inputVer.begin(), inputVer.end(), ::isdigit) || stoi(inputVer)<=0){
+            cout<<"Ingresa un numero valido: ";
+            cin>>inputVer;
+            cout<<'\n';
         }
-
-        {
-            size_t verCount = static_cast<size_t>(ver);
-            cout<<"Ingresa la cantidad de lineas: "; cin>>lin; cout<<'\n';
-            cout<<"La Grafica es no dirigida(1) o dirigida(2)?: "; cin>>tipoGrafica; cout<<'\n';
+        ver = stoi(inputVer);
+        
+        string inputLin;
+        cout<<"Ingresa la cantidad de lineas: "; cin>>inputLin; cout<<'\n';
+        while(!all_of(inputLin.begin(), inputLin.end(), ::isdigit)){
+            cout<<"Ingresa un numero valido: ";
+            cin>>inputLin;
+            cout<<'\n';
+        }
+        lin = stoi(inputLin);
+        
+        string inputTipo;
+        cout<<"La Grafica es no dirigida(1) o dirigida(2)?: "; cin>>inputTipo; cout<<'\n';
+        while(inputTipo != "1" && inputTipo != "2"){
+            cout<<"Opcion no valida, ingresa 1 o 2: ";
+            cin>>inputTipo;
+            cout<<'\n';
+        }
+        tipoGrafica = stoi(inputTipo);
 
             Mat grados2(ver, vector<ll>(2,0));
             vector<ll> grados1(ver, 0);
