@@ -1,11 +1,6 @@
 #pragma once
 #include <bits/stdc++.h>
 using namespace std;
-
-// ─────────────────────────────────────────────
-//  Funciones disponibles
-// ─────────────────────────────────────────────
-
 //  f1(x) = x^4 * sqrt(3 + 2x^2) / 3
 double integ_f1(double x) {
     return (x * x * x * x * sqrt(3.0 + 2.0 * x * x)) / 3.0;
@@ -16,9 +11,6 @@ double integ_f2(double x) {
     return (x * x * x * x * x) / pow(x * x + 4.0, 1.0 / 5.0);
 }
 
-// ─────────────────────────────────────────────
-//  Regla del trapecio compuesta con 2^k subintervalos
-// ─────────────────────────────────────────────
 double trapecio(double (*f)(double), double a, double b, int k) {
     int n = 1 << k;          // n = 2^k
     double h = (b - a) / n;
@@ -28,15 +20,6 @@ double trapecio(double (*f)(double), double a, double b, int k) {
     return suma * h / 2.0;
 }
 
-// ─────────────────────────────────────────────
-//  Tabla de Romberg hasta O(h^6)
-//
-//  Columna 0: R[k][0] = trapecio con 2^k subintervalos  -> O(h^2)
-//  Columna 1: R[k][1] = primera  extrapolacion           -> O(h^4)
-//  Columna 2: R[k][2] = segunda  extrapolacion           -> O(h^6)
-//
-//  Se necesitan al menos 3 filas (k=0,1,2) para tener R[2][2]
-// ─────────────────────────────────────────────
 void romberg(double (*f)(double), double a, double b, int decimales, int filas) {
 
     // filas = numero de niveles k pedidos por el usuario (minimo 3 para llegar a O(h^6))
@@ -82,10 +65,6 @@ void romberg(double (*f)(double), double a, double b, int decimales, int filas) 
 
     cout << "\nResultado final (O(h^6)): " << R[filas-1][2] << "\n";
 }
-
-// ─────────────────────────────────────────────
-//  Menu principal de integracion
-// ─────────────────────────────────────────────
 void integracion() {
     while (true) {
         cout << "\n======================================\n";
