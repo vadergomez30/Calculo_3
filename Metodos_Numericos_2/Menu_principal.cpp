@@ -2,6 +2,7 @@
 #include "Broyden.h"
 #include "Diferencias_Newton.h"
 #include "Spline_Cubico.h"
+#include "Romberg.h"
 using namespace std;
 
 int main() {
@@ -14,7 +15,8 @@ int main() {
         cout << "1. Sistemas de ecuaciones no lineales (Broyden)" << endl;
         cout << "2. Interpolacion polinomial (Diferencias de Newton)" << endl;
         cout << "3. Spline Cubico" << endl;
-        cout << "4. Salir" << endl;
+        cout<< "4. Integracion numerica (Romberg)" << endl;
+        cout << "5. Salir" << endl;
         cout << "Seleccione una opcion: ";
         int opcion; cin >> opcion;
         switch(opcion) {
@@ -32,7 +34,10 @@ int main() {
                 splineCubico();
                 break;
             case 4:
-
+                cout << "Integracion numerica seleccionada." << endl;
+                integracion();
+                break;
+            case 5:
                 cout << "Saliendo." << endl;
                 salir = true;
 
