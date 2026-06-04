@@ -183,13 +183,7 @@ void calcularSpline(const vector<vector<double>>& mat) {
         B[i] = 6.0 * (f[i+1] - f[i]);              // lado derecho
     }
 
-    cout << "\nMatriz A (sistema tridiagonal):\n";
-    for (int i = 0; i < m; i++) {
-        for (int j = 0; j < m; j++) cout << setw(10) << A[i][j];
-        cout << "\n";
-    }
-    cout << "\nVector B:\n";
-    for (int i = 0; i < m; i++) cout << "  " << B[i] << "\n";
+
 
     // ── Paso 3: Resolver A*M = B ──
     Mat B_mat(m, vector<double>(1));
@@ -207,10 +201,6 @@ void calcularSpline(const vector<vector<double>>& mat) {
     vector<double> M(n, 0.0);   // M[0] = M[n-1] = 0  (frontera natural)
     for (int i = 0; i < m; i++) M[i+1] = X[i][0];
 
-    cout << "\nMomentos M_i (segundas derivadas en los nodos):\n";
-    for (int i = 0; i < n; i++)
-        cout << "  M[" << i << "] = " << M[i] << "\n";
-
     // ── Paso 5: Coeficientes de cada tramo ──
     //  S_i(x) = a_i*(x-x_i)^3 + b_i*(x-x_i)^2 + c_i*(x-x_i) + d_i
     vector<double> a(n-1), b(n-1), c(n-1), d(n-1);
@@ -221,26 +211,50 @@ void calcularSpline(const vector<vector<double>>& mat) {
         d[i] = mat[i][1];
     }
 
-    cout << "\nCoeficientes por tramo:\n";
-    cout << fixed << setprecision(6);
-    for (int i = 0; i < n-1; i++) {
-        cout << "  Tramo " << i+1
-             << " [" << mat[i][0] << ", " << mat[i+1][0] << "]:\n";
-        cout << "    a = " << a[i] << "\n";
-        cout << "    b = " << b[i] << "\n";
-        cout << "    c = " << c[i] << "\n";
-        cout << "    d = " << d[i] << "\n";
-    }
+    // ── Tabla compacta ──
+    cout << fixed << setprecision(5);
+    int W = 11; // ancho de cada columna
 
-    cout << "\nFunciones de spline cubico natural:\n";
+    cout << "\n=== TABLA SPLINE ===\n";
+    cout << setw(4)  << "i"
+         << setw(W)  << "xi"
+         << setw(W)  << "yi"
+         << setw(W)  << "hi"
+         << setw(W)  << "fi"
+         << setw(W)  << "Si"
+         << setw(W)  << "ai"
+         << setw(W)  << "bi"
+         << setw(W)  << "ci"
+         << setw(W)  << "di"
+         << "\n";
+    cout << string(4 + W*9, '-') << "\n";
+
+    // La tabla tiene n-1 filas (una por tramo)
+    // Si = M[i] (momento en el nodo izquierdo del tramo)
     for (int i = 0; i < n-1; i++) {
-        cout << "  S" << i+1 << "(x) = "
-             << a[i] << "*(x - " << mat[i][0] << ")^3  +  "
-             << b[i] << "*(x - " << mat[i][0] << ")^2  +  "
-             << c[i] << "*(x - " << mat[i][0] << ")  +  "
-             << d[i] << "\n";
-        cout << "       valida para x en ["
-             << mat[i][0] << ", " << mat[i+1][0] << "]\n";
+        cout << setw(4)  << i
+             << setw(W)  << mat[i][0]
+             << setw(W)  << mat[i][1]
+             << setw(W)  << h[i]
+             << setw(W)  << f[i]
+             << setw(W)  << M[i]
+             << setw(W)  << a[i]
+             << setw(W)  << b[i]
+             << setw(W)  << c[i]
+             << setw(W)  << d[i]
+             << "\n";
+    }
+    cout << string(4 + W*9, '-') << "\n";
+
+    // ── Polinomios por tramo ──
+    cout << "\n=== POLINOMIOS SPLINE ===\n";
+    for (int i = 0; i < n-1; i++) {
+        cout << "S" << i << "(x) = "
+             << a[i] << "*(x - " << mat[i][0] << ")^3 + "
+             << b[i] << "*(x - " << mat[i][0] << ")^2 + "
+             << c[i] << "*(x - " << mat[i][0] << ") + "
+             << d[i]
+             << "   [" << mat[i][0] << ", " << mat[i+1][0] << "]\n";
     }
 
     // ── Paso 6 (opcional): Evaluar el spline en un punto ──
