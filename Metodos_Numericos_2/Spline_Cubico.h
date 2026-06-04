@@ -1,24 +1,14 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// ─────────────────────────────────────────────
-//  Tipos y utilidades de álgebra lineal
-// ─────────────────────────────────────────────
-typedef vector<vector<double>> Mat;
-// ─────────────────────────────────────────────
-//  Lectura de datos
-// ─────────────────────────────────────────────
 
-// Limpia espacios al inicio y al final de un string
+typedef vector<vector<double>> Mat;
+
 string trim(const string& s) {
     size_t a = s.find_first_not_of(" \t\r\n");
     size_t b = s.find_last_not_of(" \t\r\n");
     return (a == string::npos) ? "" : s.substr(a, b - a + 1);
 }
-
-// Lee puntos desde un archivo CSV.
-// Acepta separadores ',' o ';'. Ignora líneas vacías y encabezados.
-// Retorna false si hubo error grave.
 bool leerDesdeCSV(const string& nombreArchivo, vector<vector<double>>& puntos) {
     ifstream archivo(nombreArchivo);
     if (!archivo.is_open()) {
@@ -34,10 +24,10 @@ bool leerDesdeCSV(const string& nombreArchivo, vector<vector<double>>& puntos) {
         linea = trim(linea);
         if (linea.empty()) continue;
 
-        // Detectar separador
+    
         char sep = (linea.find(';') != string::npos) ? ';' : ',';
 
-        // Separar columnas
+        
         stringstream ss(linea);
         string token1, token2;
         if (!getline(ss, token1, sep) || !getline(ss, token2, sep)) {
@@ -47,13 +37,12 @@ bool leerDesdeCSV(const string& nombreArchivo, vector<vector<double>>& puntos) {
         token1 = trim(token1);
         token2 = trim(token2);
 
-        // Intentar convertir a double
+    
         try {
             double x = stod(token1);
             double y = stod(token2);
             puntos.push_back({x, y});
         } catch (...) {
-            // Probablemente es encabezado (ej. "x,y") — se omite sin error
             if (numLinea == 1)
                 cout << "Info: Se omitió la primera línea (posible encabezado).\n";
             else
@@ -68,7 +57,6 @@ bool leerDesdeCSV(const string& nombreArchivo, vector<vector<double>>& puntos) {
     return true;
 }
 
-// Lee puntos manualmente desde la consola
 bool leerManual(vector<vector<double>>& puntos) {
     int n;
     cout << "Ingrese la cantidad de puntos: ";
@@ -93,7 +81,6 @@ bool leerManual(vector<vector<double>>& puntos) {
         }
     }
 
-    // Confirmación y corrección
     cout << "\nLos puntos ingresados son:\n";
     for (int i = 0; i < n; i++)
         cout << "  " << i << ": (" << puntos[i][0] << ", " << puntos[i][1] << ")\n";
@@ -120,9 +107,7 @@ bool leerManual(vector<vector<double>>& puntos) {
     return true;
 }
 
-// ─────────────────────────────────────────────
 //  Cálculo del spline cúbico natural
-// ─────────────────────────────────────────────
 //
 //  Convención:  S_i(x) = a_i*(x-x_i)^3 + b_i*(x-x_i)^2 + c_i*(x-x_i) + d_i
 //
@@ -141,7 +126,6 @@ bool leerManual(vector<vector<double>>& puntos) {
 void calcularSpline(const vector<vector<double>>& mat) {
     int n = mat.size();
 
-    // Verificar que los x estén ordenados y sin repeticiones
     for (int i = 0; i < n - 1; i++) {
         if (mat[i+1][0] <= mat[i][0]) {
             cout << "Error: los valores de x deben ser estrictamente crecientes.\n";
@@ -151,14 +135,14 @@ void calcularSpline(const vector<vector<double>>& mat) {
         }
     }
 
-    // ── Paso 1: h_i y diferencias divididas f_i ──
+    //Paso 1: h_i y diferencias divididas f_i ──
     vector<double> h(n-1), f(n-1);
     for (int i = 0; i < n-1; i++) {
         h[i] = mat[i+1][0] - mat[i][0];
         f[i] = (mat[i+1][1] - mat[i][1]) / h[i];
     }
 
-    // ── Paso 2: Sistema tridiagonal para momentos interiores ──
+    // aso 2: Sistema tridiagonal para momentos interiores ──
     //  m = número de momentos interiores = n-2
     //  fila i del sistema corresponde al nodo interior i+1
     int m = n - 2;
@@ -202,7 +186,6 @@ void calcularSpline(const vector<vector<double>>& mat) {
     for (int i = 0; i < m; i++) M[i+1] = X[i][0];
 
     // ── Paso 5: Coeficientes de cada tramo ──
-    //  S_i(x) = a_i*(x-x_i)^3 + b_i*(x-x_i)^2 + c_i*(x-x_i) + d_i
     vector<double> a(n-1), b(n-1), c(n-1), d(n-1);
     for (int i = 0; i < n-1; i++) {
         a[i] = (M[i+1] - M[i]) / (6.0 * h[i]);
@@ -229,8 +212,6 @@ void calcularSpline(const vector<vector<double>>& mat) {
          << "\n";
     cout << string(4 + W*9, '-') << "\n";
 
-    // La tabla tiene n-1 filas (una por tramo)
-    // Si = M[i] (momento en el nodo izquierdo del tramo)
     for (int i = 0; i < n-1; i++) {
         cout << setw(4)  << i
              << setw(W)  << mat[i][0]
@@ -285,9 +266,7 @@ void calcularSpline(const vector<vector<double>>& mat) {
     }
 }
 
-// ─────────────────────────────────────────────
 //  Menú principal
-// ─────────────────────────────────────────────
 void splineCubico() {
     char continuar = 's';
     while (continuar == 's' || continuar == 'S') {
